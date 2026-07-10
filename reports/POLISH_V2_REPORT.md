@@ -1,6 +1,6 @@
 # Polish v2 Report
 
-Status: `LOCAL_VALIDATION_COMPLETE`
+Status: `WAITING_FOR_REVIEW_AFTER_POLISH_V2`
 
 ## 1. Goal
 
@@ -117,17 +117,28 @@ Removed public explanations about structured author storage, bolding rules, link
 - `astro check`: 0 errors, 0 warnings, 0 hints.
 - Structured data validation: 16 publications, 5 selected works, 11 projects, 18 awards, 2 patents, 4 resource groups.
 - Static build: 14 pages generated.
+- Internal link check: 14 pages and 212 local links/resources passed before and after the final rebuild.
+- Privacy audit: passed before and after report generation.
+- Remote safety: passed with the sole allowlisted `origin`, `fork=false`, `parent=null`, and `source=null`.
 - Responsive Playwright: 56/56 passed across 1440x1000, 1024x768, 768x1024, and 390x844.
 - Manual screenshot inspection: English/Chinese home and Publications pages checked at 1440px and 390px; no overlap, distortion, chart overflow, or unintended horizontal scroll observed.
 - Final `npm ci`, link, privacy, remote-safety, and clean-diff results are recorded before deployment.
 
 ## 18. GitHub Actions run IDs
 
-Validation deployment run IDs will be recorded once after the first successful Polish v2 deployment. They will not be repeatedly rewritten to chase report-only workflow runs.
+- Quality: `29073919817` — success for commit `28eec6c111566bc2d58cca975b1d0203884844c4`.
+- Deploy to GitHub Pages: `29073919838` — success for the same commit.
+
+These IDs identify the first complete Polish v2 validation deployment. They are recorded once and will not be rewritten to chase the report-only follow-up commit.
 
 ## 19. Online readback
 
-The 14-route online readback will be recorded after the cleanroom Pages deployment succeeds.
+- Preview: https://philharmy-wang.github.io/academic-homepage-cleanroom/
+- Result: 14/14 English and Chinese routes returned HTTP 200.
+- Real Chrome checks: no horizontal overflow, failed resources, console errors, or broken images.
+- Both Publications routes rendered exactly four groups, the Citation Trend, five local thumbnails, and no Other Publications heading.
+- Chinese routes displayed Guanbo Wang and did not display 王冠博.
+- CSS, portrait, publication SVGs, favicon, and internal navigation loaded without 404 responses.
 
 ## 20. Items awaiting author confirmation
 
