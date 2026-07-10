@@ -1,0 +1,43 @@
+name: Update citations
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 2 * * 0'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.repository == 'Philharmy-Wang/academic-homepage-cleanroom'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify repository context
+        run: test "$GITHUB_REPOSITORY" = "Philharmy-Wang/academic-homepage-cleanroom"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run citations:update
+      - run: npm run validate:data
+      - run: npm run safety:remote
+      - name: Commit changed citation data
+        run: |
+          if git diff --quiet -- src/data/generated/citations.json; then
+            echo "Citation data is unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/generated/citations.json
+          git diff --cached --check
+          git commit -m "chore(citations): update public citation data"
+          git push origin HEAD:main

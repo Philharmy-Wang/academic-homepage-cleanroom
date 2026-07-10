@@ -1,41 +1,67 @@
 ---
 import type { Language, Publication } from '../data/types';
+import citations from '../data/generated/citations.json';
+import { withBase } from '../utils/paths';
 import ExternalLink from './ExternalLink.astro';
 import MetricBadge from './MetricBadge.astro';
 
 interface Props { publication: Publication; lang: Language; compact?: boolean; }
+interface CitationEntry { totalCitations: number; source: string; }
 const { publication, lang, compact = false } = Astro.props;
 const authorLabel = publication.authors.map((author) => ({
   ...author,
-  display: lang === 'zh' && author.nameZh ? author.nameZh : author.name,
+  display: author.self ? 'Guanbo Wang' : (lang === 'zh' && author.nameZh ? author.nameZh : author.name),
 }));
 const bibliographicParts = [
   publication.volume && publication.issue ? `${publication.volume}(${publication.issue})` : publication.volume,
   publication.pages ?? publication.articleNumber,
 ].filter(Boolean);
-const scholarUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(publication.title)}`;
+const scholarUrl = publication.scholarUrl ?? `https://scholar.google.com/scholar?q=${encodeURIComponent(publication.title)}`;
+const citationEntry = (citations.works as Record<string, CitationEntry>)[publication.id];
+const citationDate = citations.updatedAt
+  ? new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'zh-CN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(citations.updatedAt))
+  : null;
+const verifiedMetrics = publication.metrics.filter((metric) => metric.verifiedYear);
+const structuredLinks = [
+  publication.doi && { label: 'DOI', url: `https://doi.org/${publication.doi}` },
+  publication.publisherUrl && { label: 'Publisher', url: publication.publisherUrl },
+  publication.pdfUrl && { label: 'PDF', url: publication.pdfUrl },
+  publication.codeUrl && { label: 'Code', url: publication.codeUrl },
+  publication.datasetUrl && { label: 'Dataset', url: publication.datasetUrl },
+  publication.projectUrl && { label: 'Project', url: publication.projectUrl },
+  ...publication.links,
+].filter((link): link is { label: string; url: string } => Boolean(link));
+const directLinks = [...new Map(structuredLinks.map((link) => [link.url, link])).values()];
+const showFigure = !compact && publication.figure;
 ---
 
-<article class:list={['publication-card', { compact }]} id={publication.id}>
+<article class:list={['publication-card', { compact, 'has-figure': showFigure }]} id={publication.id}>
   <div class="publication-year">{publication.year}</div>
-  <div class="publication-body">
-    <h3>{lang === 'zh' && publication.titleZh ? publication.titleZh : publication.title}</h3>
-    <p class="authors">
-      {authorLabel.map((author, index) => (
-        <><span class:list={{ 'self-author': author.self }} lang={lang === 'zh' && author.nameZh ? 'zh-CN' : undefined}>{author.display}{author.corresponding ? <sup title={lang === 'en' ? 'Corresponding author' : '通讯作者'}>*</sup> : ''}</span>{index < authorLabel.length - 1 ? ', ' : ''}</>
-      ))}
-    </p>
-    <p class="venue"><em>{publication.venue}</em>, {publication.year}{bibliographicParts.length ? `, ${bibliographicParts.join(': ')}` : ''}.</p>
-    <p class="contribution"><strong>{publication.role[lang]}.</strong> {publication.contribution[lang]}</p>
-    {!compact && publication.metrics.length > 0 && (
-      <div class="metric-row" aria-label={lang === 'en' ? 'Verified journal metrics' : '已核验期刊指标'}>
-        {publication.metrics.map((metric) => <MetricBadge label={metric.label} value={metric.value} />)}
+  <div class="publication-content">
+    <div class="publication-body">
+      <h3>{lang === 'zh' && publication.titleZh ? publication.titleZh : publication.title}</h3>
+      <p class="authors">
+        {authorLabel.map((author, index) => (
+          <><span class:list={{ 'self-author': author.self }} lang={author.self ? 'en' : (lang === 'zh' && author.nameZh ? 'zh-CN' : undefined)}>{author.display}{author.corresponding ? <sup title={lang === 'en' ? 'Corresponding author' : '通讯作者'}>*</sup> : ''}</span>{index < authorLabel.length - 1 ? ', ' : ''}</>
+        ))}
+      </p>
+      <p class="venue"><em>{publication.venue}</em>, {publication.year}{bibliographicParts.length ? `, ${bibliographicParts.join(', ')}` : ''}.</p>
+      <p class="contribution"><strong>{publication.role[lang]}.</strong> {publication.contribution[lang]}</p>
+      {!compact && verifiedMetrics.length > 0 && (
+        <div class="metric-row" aria-label={lang === 'en' ? 'Journal indicators with verified edition year' : '已标明核验年度的期刊指标'}>
+          {verifiedMetrics.map((metric) => <MetricBadge label={`${metric.label} ${metric.verifiedYear}`} value={metric.value} />)}
+        </div>
+      )}
+      <div class="publication-links">
+        {directLinks.map((link) => <ExternalLink href={link.url}>{link.label}</ExternalLink>)}
+        <ExternalLink href={scholarUrl}>Google Scholar</ExternalLink>
+        {citationEntry && <span class="citation-note">{lang === 'en' ? `OpenAlex citations: ${citationEntry.totalCitations}${citationDate ? ` · snapshot ${citationDate}` : ''}` : `OpenAlex 引用：${citationEntry.totalCitations}${citationDate ? ` · 快照 ${citationDate}` : ''}`}</span>}
       </div>
-    )}
-    <div class="publication-links">
-      {publication.links.map((link) => <ExternalLink href={link.url}>{link.label}</ExternalLink>)}
-      <ExternalLink href={scholarUrl}>Google Scholar</ExternalLink>
-      {publication.citations !== null && <span class="citation-note">{lang === 'en' ? `Citations in the latest author-provided Scholar record: ${publication.citations}` : `作者提供的最新 Scholar 记录引用数：${publication.citations}`}</span>}
     </div>
+    {showFigure && (
+      <figure class="publication-figure">
+        <img src={withBase(publication.figure!.src)} alt={publication.figure!.alt[lang]} width={publication.figure!.width} height={publication.figure!.height} loading="eager" />
+      </figure>
+    )}
   </div>
 </article>

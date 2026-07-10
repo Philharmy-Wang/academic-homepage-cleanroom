@@ -15,8 +15,8 @@ export const awards: Award[] = [
   { id: 'huawei-math-2024', group: 'competitions', year: '2024', title: { en: 'Huawei Cup China Graduate Mathematical Modeling Competition, First Prize', zh: '华为杯中国研究生数学建模竞赛一等奖' }, level: { en: 'National', zh: '国家级' } },
   { id: 'electronic-design-2024', group: 'competitions', year: '2024', title: { en: 'China Graduate Electronic Design Competition, Second Prize', zh: '中国研究生电子设计竞赛二等奖' }, level: { en: 'National', zh: '国家级' } },
   { id: 'huawei-math-2023', group: 'competitions', year: '2023', title: { en: 'Huawei Cup China Graduate Mathematical Modeling Competition, Second Prize', zh: '华为杯中国研究生数学建模竞赛二等奖' }, level: { en: 'National', zh: '国家级' } },
-  { id: 'shuwei-2023', group: 'competitions', year: '2023', title: { en: 'Shuwei Cup Mathematical Modeling Competition, Graduate Group, First Prize', zh: '数维杯大学生数学建模竞赛研究生组一等奖' } },
-  { id: 'huawei-math-2022', group: 'competitions', year: '2022', title: { en: 'Huawei Cup China Graduate Mathematical Modeling Competition, Second Prize', zh: '华为杯中国研究生数学建模竞赛二等奖' } },
-  { id: 'mcm-2021', group: 'competitions', year: '2021', title: { en: 'Mathematical Contest in Modeling, Honorable Mention', zh: '美国大学生数学建模竞赛 Honorable Mention' } },
-  { id: 'mcm-2020', group: 'competitions', year: '2020', title: { en: 'Mathematical Contest in Modeling, Honorable Mention', zh: '美国大学生数学建模竞赛 Honorable Mention' } },
+  { id: 'shuwei-2023', group: 'competitions', year: '2023', title: { en: 'First Prize, Shuwei Cup Mathematical Modeling Challenge', zh: '数维杯大学生数学建模竞赛一等奖' }, category: { en: 'Graduate Division', zh: '研究生组' } },
+  { id: 'huawei-math-2022', group: 'competitions', year: '2022', title: { en: 'Second Prize, Huawei Cup China Graduate Mathematical Modeling Competition', zh: '华为杯中国研究生数学建模竞赛二等奖' }, category: { en: 'National Competition', zh: '全国性赛事' } },
+  { id: 'mcm-2021', group: 'competitions', year: '2021', title: { en: 'Honorable Mention, Mathematical Contest in Modeling', zh: '美国大学生数学建模竞赛荣誉奖' }, category: { en: 'International Competition', zh: '国际赛事' } },
+  { id: 'mcm-2020', group: 'competitions', year: '2020', title: { en: 'Honorable Mention, Mathematical Contest in Modeling', zh: '美国大学生数学建模竞赛荣誉奖' }, category: { en: 'International Competition', zh: '国际赛事' } },
 ];

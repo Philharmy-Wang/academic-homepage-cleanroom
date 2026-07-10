@@ -20,11 +20,22 @@ export interface PublicationLink {
 export interface PublicationMetric {
   label: string;
   value: string;
+  verifiedYear?: number;
+  source?: string;
+}
+
+export interface PublicationFigure {
+  src: string;
+  width: number;
+  height: number;
+  alt: BilingualText;
+  sourceCategory: 'original-site-illustration';
+  sourceNote: string;
 }
 
 export interface Publication {
   id: string;
-  group: 'First-author Publications' | 'Co-authored Publications' | 'Chinese Publications' | 'Other Publications';
+  group: 'First-author Publications' | 'Co-authored Publications' | 'Chinese Publications';
   selected: boolean;
   title: string;
   titleZh: string | null;
@@ -38,9 +49,16 @@ export interface Publication {
   role: BilingualText;
   contribution: BilingualText;
   firstAffiliation: string | null;
+  doi: string | null;
+  publisherUrl: string | null;
+  pdfUrl: string | null;
+  codeUrl: string | null;
+  datasetUrl: string | null;
+  projectUrl: string | null;
+  scholarUrl: string | null;
+  figure: PublicationFigure | null;
   links: PublicationLink[];
   metrics: PublicationMetric[];
-  citations: number | null;
   verifiedAt: string;
   sourceNotes: string;
 }
@@ -51,7 +69,7 @@ export interface Project {
   title: BilingualText;
   project: BilingualText;
   organization?: BilingualText;
-  period?: string;
+  period?: string | BilingualText;
   status?: BilingualText;
   role: BilingualText;
 }
@@ -64,4 +82,5 @@ export interface Award {
   role?: BilingualText;
   project?: BilingualText;
   level?: BilingualText;
+  category?: BilingualText;
 }

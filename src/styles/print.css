@@ -9,6 +9,8 @@
   h3 { color: #000; }
   a { color: #000; text-decoration: none; }
   .publication-card, .project-card, .research-card, .cv-profile { border: 0; box-shadow: none; background: #fff; }
+  .publication-card.has-figure .publication-content { display: block; }
+  .publication-figure, .citation-plot { display: none; }
   .publication-card, .project-card, .research-card, .award-item, .cv-row, .patent-item { break-inside: avoid; page-break-inside: avoid; }
   .metric-badge { border-color: #bbb; background: #fff; }
   .cv-section + .cv-section { margin-top: 1.4rem; }

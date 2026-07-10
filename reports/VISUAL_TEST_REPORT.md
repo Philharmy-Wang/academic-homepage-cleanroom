@@ -1,6 +1,6 @@
 # Visual Test Report
 
-- Generated: 2026-07-10T02:32:41.901Z
+- Generated: 2026-07-10T06:27:00.370Z
 - Viewports: 1440x1000, 1024x768, 768x1024, 390x844
 - Routes per viewport: 14
 - Expected screenshots: 56

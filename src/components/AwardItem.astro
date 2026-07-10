@@ -4,11 +4,11 @@ interface Props { award: Award; lang: Language; }
 const { award, lang } = Astro.props;
 ---
 
-<article class="award-item">
+<article class="award-item" id={award.id}>
   <time>{award.year}</time>
   <div>
     <h3>{award.title[lang]}</h3>
     {award.project && <p class="award-project">{award.project[lang]}</p>}
-    <p class="award-meta">{[award.level?.[lang], award.role?.[lang]].filter(Boolean).join(' · ')}</p>
+    <p class="award-meta">{[award.category?.[lang], award.level?.[lang], award.role?.[lang]].filter(Boolean).join(' · ')}</p>
   </div>
 </article>

@@ -15,6 +15,7 @@
     "check:links": "node scripts/check-internal-links.mjs",
     "privacy:audit": "node scripts/privacy-audit.mjs",
     "safety:remote": "node scripts/assert-safe-remote.mjs",
+    "citations:update": "node --import tsx scripts/update-citations.mjs",
     "test:visual": "playwright test --project=desktop",
     "test:responsive": "playwright test",
     "report": "node scripts/generate-report.mjs",

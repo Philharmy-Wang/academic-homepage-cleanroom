@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">RFWNet abstract method thumbnail</title>
+  <desc id="desc">Multiscale remote-sensing layers, sparse feature nodes, and a wildfire target are linked in a detection network.</desc>
+  <rect width="640" height="400" rx="28" fill="#f3f7fb"/>
+  <text x="64" y="55" fill="#315b7d" font-family="Segoe UI,Arial,sans-serif" font-size="24" font-weight="700">RFWNet</text>
+  <g fill="none" stroke="#d7e0e8" stroke-width="18" stroke-linecap="round"><path d="M76 122h302"/><path d="M76 188h238"/><path d="M76 254h176"/></g>
+  <g fill="none" stroke="#315b7d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M76 122l52-28 58 34 62-45 62 41 68-29M76 188l45-21 53 29 47-35 45 30 48-18M76 254l39-19 40 24 46-31 51 28"/>
+    <path d="M390 112l54 46 72-32 58 68-47 80-100-17-37-70z"/>
+    <circle cx="444" cy="158" r="8"/><circle cx="516" cy="126" r="8"/><circle cx="574" cy="194" r="8"/><circle cx="527" cy="274" r="8"/><circle cx="427" cy="257" r="8"/>
+    <path d="M444 158l83 116M516 126l11 148M574 194l-147 63"/>
+  </g>
+  <path d="M476 229c-18-25 12-41 6-63 29 20 38 43 22 67-8 13-22 18-35 11-12-7-14-23-5-34 0 10 4 16 12 19z" fill="#a75017"/>
+  <text x="64" y="352" fill="#536575" font-family="Segoe UI,Arial,sans-serif" font-size="16">multiscale features · digital twinning · dynamic sparsity</text>
+</svg>

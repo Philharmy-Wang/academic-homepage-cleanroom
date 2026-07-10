@@ -3,6 +3,7 @@ import type { Language } from '../data/types';
 import { profile } from '../data/profile';
 import { localizedRoute, withBase } from '../utils/paths';
 import ExternalLink from './ExternalLink.astro';
+import Icon from './Icon.astro';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
@@ -10,20 +11,26 @@ const { lang } = Astro.props;
 
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">{lang === 'en' ? 'Computer vision · Animal behavior' : '计算机视觉 · 动物行为'}</p>
-    <h1 id="hero-title"><span>{profile.name.en}</span><span class="name-zh" lang="zh-CN">王冠博</span></h1>
+    <p class="eyebrow hero-eyebrow"><Icon name="focus" />{lang === 'en' ? 'Computer vision · Animal behavior' : '计算机视觉 · 动物行为'}</p>
+    <h1 id="hero-title">{profile.name.en}</h1>
     <p class="hero-position">{profile.position[lang]}</p>
     <p class="hero-affiliation">{profile.affiliation[lang]}</p>
     <p class="hero-focus">{profile.positioning[lang]}</p>
     <div class="hero-actions" aria-label={lang === 'en' ? 'Profile links' : '个人资料链接'}>
-      <a class="button primary" href={`mailto:${profile.email}`}>Email</a>
-      <ExternalLink class="button" href={profile.scholar}>Google Scholar</ExternalLink>
-      <ExternalLink class="button" href={profile.github}>GitHub</ExternalLink>
-      <a class="button" href={localizedRoute('/cv/', lang)}>CV</a>
-      <a class="button language-inline" href={localizedRoute('/', lang === 'en' ? 'zh' : 'en')}>{lang === 'en' ? '中文' : 'English'}</a>
+      <a class="button primary" href={`mailto:${profile.email}`}><Icon name="mail" />Email</a>
+      <ExternalLink class="button" href={profile.scholar}><Icon name="scholar" />Google Scholar</ExternalLink>
+      <ExternalLink class="button" href={profile.github}><Icon name="github" />GitHub</ExternalLink>
+      <a class="button" href={localizedRoute('/cv/', lang)}><Icon name="cv" />CV</a>
+      <a class="button language-inline" href={localizedRoute('/', lang === 'en' ? 'zh' : 'en')}><Icon name="language" />{lang === 'en' ? '中文' : 'English'}</a>
     </div>
   </div>
-  <figure class="portrait-frame">
-    <img src={withBase('/images/profile/wangguanbo.jpg')} alt={lang === 'en' ? 'Portrait of Guanbo Wang' : '王冠博个人照片'} width="1720" height="2242" loading="eager" fetchpriority="high" />
-  </figure>
+  <div class="portrait-panel">
+    <figure class="portrait-frame">
+      <img src={withBase('/images/profile/wangguanbo.jpg')} alt={lang === 'en' ? 'Portrait of Guanbo Wang' : 'Guanbo Wang 个人照片'} width="1720" height="2242" loading="eager" fetchpriority="high" />
+    </figure>
+    <div class="hero-scope">
+      <span class="hero-scope-icon" aria-hidden="true"><Icon name="primate" /></span>
+      <div><span>{lang === 'en' ? 'Research focus' : '研究聚焦'}</span><strong>{lang === 'en' ? 'Vision · Identity · Behavior' : '视觉感知 · 个体识别 · 行为理解'}</strong></div>
+    </div>
+  </div>
 </section>

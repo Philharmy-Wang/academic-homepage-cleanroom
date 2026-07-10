@@ -8,6 +8,11 @@ const routes = [
 ];
 const distRoot = resolve('dist');
 const prefix = '/academic-homepage-cleanroom';
+const developerCopy = [
+  'Authors are stored as structured data', '作者信息采用结构化数据维护',
+  'Direct links appear only', '仅在公开来源中已有有效链接时显示直接入口',
+  '数据文件', '自动化更新说明',
+];
 const contentTypes: Record<string, string> = {
   '.css': 'text/css; charset=utf-8', '.html': 'text/html; charset=utf-8', '.ico': 'image/x-icon',
   '.jpg': 'image/jpeg', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -55,6 +60,14 @@ for (const route of routes) {
     }));
     expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
 
+    const visibleIcons = await page.locator('.icon').evaluateAll((icons) => icons.map((icon) => icon.getBoundingClientRect()).filter((box) => box.width > 0 && box.height > 0));
+    for (const icon of visibleIcons) {
+      expect(icon.left).toBeGreaterThanOrEqual(-1);
+      expect(icon.right).toBeLessThanOrEqual(testInfo.project.use.viewport!.width + 1);
+      expect(icon.width).toBeLessThanOrEqual(64);
+      expect(icon.height).toBeLessThanOrEqual(64);
+    }
+
     const header = await page.locator('.site-header').boundingBox();
     expect(header).not.toBeNull();
     expect(header!.x).toBeGreaterThanOrEqual(-1);
@@ -72,6 +85,62 @@ for (const route of routes) {
       expect(image.width).toBeGreaterThan(0);
       expect(image.height).toBeGreaterThan(0);
       expect(Math.abs(image.displayedRatio - image.naturalRatio)).toBeLessThan(0.02);
+    }
+
+    const bodyText = await page.locator('body').innerText();
+    for (const prohibited of developerCopy) expect(bodyText).not.toContain(prohibited);
+    if (route.startsWith('zh/')) {
+      expect(bodyText).not.toContain('王冠博');
+      expect(await page.title()).not.toContain('王冠博');
+      expect(await page.locator('meta[name="description"]').getAttribute('content')).not.toContain('王冠博');
+    }
+
+    if (route === '' || route === 'zh/') {
+      const hero = page.locator('.hero');
+      await expect(hero).toBeVisible();
+      await expect(hero.locator('h1')).toHaveText('Guanbo Wang');
+      await expect(hero.locator('.research-icon, .hero-scope-icon').first()).toBeVisible();
+      const headingBox = await hero.locator('h1').boundingBox();
+      const portraitBox = await hero.locator('.portrait-panel').boundingBox();
+      expect(headingBox).not.toBeNull();
+      expect(portraitBox).not.toBeNull();
+      if (testInfo.project.use.viewport!.width > 720) expect(headingBox!.x + headingBox!.width).toBeLessThanOrEqual(portraitBox!.x + 1);
+      else expect(headingBox!.y + headingBox!.height).toBeLessThan(portraitBox!.y);
+      await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+    }
+
+    if (route === 'research/' || route === 'zh/research/') await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+
+    if (route === 'publications/' || route === 'zh/publications/') {
+      const groups = page.locator('[data-publication-group]');
+      await expect(groups).toHaveCount(4);
+      await expect(page.getByText(route.startsWith('zh/') ? '其他论文' : 'Other Publications', { exact: true })).toHaveCount(0);
+      const coauthored = page.locator('[data-publication-group="coauthored"]');
+      await expect(coauthored.getByText('Multi-Scale Enhanced Contextual Transformer Network for Forest Fire Detection', { exact: true })).toBeVisible();
+      await expect(page.locator('.publication-figure img')).toHaveCount(5);
+      expect(await page.locator('.publication-card:not(.has-figure)').count()).toBeGreaterThan(0);
+      await expect(page.locator('.publication-card:not(.has-figure)').first().locator('.publication-body')).toBeVisible();
+      const trend = page.locator('.citation-plot, .citation-fallback');
+      await expect(trend).toBeVisible();
+      const trendBox = await trend.boundingBox();
+      const trendSectionBox = await page.locator('.citation-trend').boundingBox();
+      expect(trendBox).not.toBeNull();
+      expect(trendSectionBox).not.toBeNull();
+      expect(trendBox!.x).toBeGreaterThanOrEqual(trendSectionBox!.x - 1);
+      expect(trendBox!.x + trendBox!.width).toBeLessThanOrEqual(trendSectionBox!.x + trendSectionBox!.width + 1);
+    }
+
+    if (route === 'projects/' || route === 'zh/projects/') {
+      await expect(page.locator('#border-monitoring')).toContainText(route.startsWith('zh/') ? '已结题' : 'Completed');
+      await expect(page.locator('#vehicular-edge')).toContainText('2020.11–2021.11');
+      await expect(page.locator('#vehicular-edge')).toContainText(route.startsWith('zh/') ? '已结题' : 'Completed');
+      await expect(page.locator('#nsfc-multilevel-wildfire')).toContainText(route.startsWith('zh/') ? '2025.08 起参与' : 'Participating since 2025.08');
+    }
+
+    if (route === 'awards/' || route === 'zh/awards/') {
+      await expect(page.locator('#shuwei-2023')).toContainText(route.startsWith('zh/') ? '研究生组' : 'Graduate Division');
+      await expect(page.locator('#huawei-math-2022')).toContainText(route.startsWith('zh/') ? '全国性赛事' : 'National Competition');
+      await expect(page.locator('#mcm-2021')).toContainText(route.startsWith('zh/') ? '国际赛事' : 'International Competition');
     }
 
     const languageSwitch = page.locator('.language-switch');

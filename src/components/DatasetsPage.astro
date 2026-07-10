@@ -7,10 +7,10 @@ interface Props { lang: Language; }
 const { lang } = Astro.props;
 const copy = lang === 'en' ? {
   title: 'Datasets & Code', description: 'Public release status of datasets and code associated with Guanbo Wang’s research.',
-  intro: 'This page communicates release status without exposing private storage locations, internal experiment directories, or unreleased collaboration links.', eyebrow: 'Research resources', contact: 'For academic collaboration or resource requests, please contact me by email.',
+  intro: 'Release status for selected datasets and research code associated with current and previous work.', eyebrow: 'Research resources', contact: 'For academic collaboration or resource requests, please contact me by email.',
 } : {
-  title: '数据与代码', description: '王冠博研究相关数据与代码的公开状态。',
-  intro: '本页仅说明资源发布状态，不公开私有存储位置、内部实验目录或未发布的合作链接。', eyebrow: '研究资源', contact: '如需开展学术合作或咨询资源，请通过邮件联系。',
+  title: '数据与代码', description: 'Guanbo Wang 研究相关数据与代码的公开状态。',
+  intro: '当前与前期研究中部分数据集及研究代码的发布状态。', eyebrow: '研究资源', contact: '如需开展学术合作或咨询资源，请通过邮件联系。',
 };
 ---
 <ContentLayout lang={lang} route="/datasets/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>

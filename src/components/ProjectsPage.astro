@@ -14,10 +14,10 @@ const groupNames = {
 const groups = Object.keys(groupNames) as Array<keyof typeof groupNames>;
 const copy = lang === 'en' ? {
   title: 'Projects', description: 'Public research projects, grants, and talent programs led by or involving Guanbo Wang.',
-  intro: 'Only public project information is presented. Funding amounts, internal identifiers, private paths, and unreleased operational details are intentionally excluded.', eyebrow: 'Research portfolio',
+  intro: 'Current and completed research projects spanning primate vision, multimodal perception, wildfire detection, and efficient visual systems.', eyebrow: 'Research portfolio',
 } : {
-  title: '科研项目', description: '王冠博主持或参与的公开科研项目、资助与人才计划。',
-  intro: '本页仅展示公开项目信息，不呈现经费金额、内部编号、私有路径或未发布的实施细节。', eyebrow: '项目概览',
+  title: '科研项目', description: 'Guanbo Wang 主持或参与的公开科研项目、资助与人才计划。',
+  intro: '涵盖灵长类视觉、多模态感知、森林野火检测与高效视觉系统的在研及已结题项目。', eyebrow: '项目概览',
 };
 ---
 <ContentLayout lang={lang} route="/projects/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>

@@ -1,0 +1,58 @@
+---
+import type { Language } from '../data/types';
+import citations from '../data/generated/citations.json';
+import { profile } from '../data/profile';
+import ExternalLink from './ExternalLink.astro';
+import Icon from './Icon.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const counts = Object.entries(citations.aggregate.countsByYear as Record<string, number>)
+  .filter(([year, count]) => /^\d{4}$/.test(year) && count >= 0)
+  .sort(([left], [right]) => left.localeCompare(right))
+  .slice(-7);
+const maximum = Math.max(...counts.map(([, count]) => count), 1);
+const workCount = Object.keys(citations.works).length;
+const available = counts.length > 0 && citations.aggregate.totalCitations > 0;
+const updated = citations.updatedAt
+  ? new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'zh-CN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(citations.updatedAt))
+  : null;
+const copy = lang === 'en' ? {
+  title: 'Citation Trend', eyebrow: 'Public scholarly metadata',
+  summary: `OpenAlex currently links ${workCount} works and records ${citations.aggregate.totalCitations} citations in total. The chart shows citations received by year.`,
+  fallback: 'A verified citation trend is not available yet. Publication links remain available below.',
+  footnote: 'Citation trends are aggregated from public scholarly metadata sources and may differ from Google Scholar.',
+  updated: 'OpenAlex snapshot', scholar: 'View Google Scholar profile',
+} : {
+  title: '引用趋势', eyebrow: '公开学术元数据',
+  summary: `OpenAlex 当前匹配 ${workCount} 篇论文，记录总引用 ${citations.aggregate.totalCitations} 次。图中展示各年度新增引用。`,
+  fallback: '当前暂无可核验的引用趋势数据，论文链接仍可在下方访问。',
+  footnote: '引用趋势根据公开学术元数据聚合，可能与 Google Scholar 统计存在差异。',
+  updated: 'OpenAlex 数据快照', scholar: '查看 Google Scholar 主页',
+};
+---
+
+<section class="citation-trend" aria-labelledby={`citation-title-${lang}`}>
+  <div class="citation-trend-heading">
+    <div class="citation-heading-copy">
+      <span class="section-icon" aria-hidden="true"><Icon name="citation" /></span>
+      <div><p class="eyebrow">{copy.eyebrow}</p><h2 id={`citation-title-${lang}`}>{copy.title}</h2></div>
+    </div>
+    <ExternalLink class="citation-scholar-link" href={profile.scholar}><Icon name="scholar" />{copy.scholar}</ExternalLink>
+  </div>
+  {available ? (
+    <>
+      <p class="sr-only">{copy.summary}</p>
+      <div class="citation-plot" role="img" aria-label={copy.summary}>
+        {counts.map(([year, count]) => (
+          <div class="citation-column">
+            <span class="citation-value">{count}</span>
+            <span class="citation-bar-track"><span class="citation-bar" style={`--bar-height: ${Math.max(4, Math.round((count / maximum) * 100))}%`}></span></span>
+            <span class="citation-year">{year}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  ) : <p class="citation-fallback">{copy.fallback}</p>}
+  <div class="citation-caption"><p>{copy.footnote}</p>{updated && <p>{copy.updated}: {updated} UTC</p>}</div>
+</section>

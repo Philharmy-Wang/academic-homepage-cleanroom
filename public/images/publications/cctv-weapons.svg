@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">CCTV object detection abstract thumbnail</title>
+  <desc id="desc">A camera feeds a real-time detection screen with a highlighted object region.</desc>
+  <rect width="640" height="400" rx="28" fill="#f3f7fb"/>
+  <text x="64" y="55" fill="#315b7d" font-family="Segoe UI,Arial,sans-serif" font-size="24" font-weight="700">Real-time CCTV Detection</text>
+  <g fill="#fff" stroke="#315b7d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M74 145h122l36 30v66H74z"/><path d="M232 190l48-26v88l-48-26"/>
+    <rect x="350" y="98" width="224" height="196" rx="18"/>
+    <path d="M408 320h108M462 294v26"/>
+  </g>
+  <path d="M280 208h46" stroke="#6f8da5" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+  <g fill="none" stroke="#6f8da5" stroke-width="3"><path d="M372 268l48-74 42 48 36-72 54 98"/><circle cx="452" cy="154" r="25"/><path d="M452 179v56m-35 31l35-31 38 31"/></g>
+  <rect x="425" y="132" width="89" height="117" rx="6" fill="none" stroke="#a75017" stroke-width="4"/>
+  <path d="M444 219h39" stroke="#a75017" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="352" fill="#536575" font-family="Segoe UI,Arial,sans-serif" font-size="16">camera stream · lightweight detector · autonomous alert</text>
+</svg>

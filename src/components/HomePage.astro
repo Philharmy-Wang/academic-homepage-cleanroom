@@ -10,6 +10,7 @@ import PublicationCard from './PublicationCard.astro';
 import ResearchCard from './ResearchCard.astro';
 import SectionHeading from './SectionHeading.astro';
 import Timeline from './Timeline.astro';
+import Icon from './Icon.astro';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
@@ -22,7 +23,7 @@ const copy = lang === 'en' ? {
   publicationsLink: 'View all publications',
   updatesTitle: 'Recent updates', updatesDescription: 'Selected research, position, grant, and publication milestones.',
 } : {
-  description: '王冠博个人学术主页，中国科学院昆明动物研究所助理研究员，研究方向为面向非人灵长类行为理解的计算机视觉。',
+  description: 'Guanbo Wang 个人学术主页，中国科学院昆明动物研究所助理研究员，研究方向为面向非人灵长类行为理解的计算机视觉。',
   bioTitle: '个人简介', bioEyebrow: '关于',
   currentTitle: '当前工作', currentText: '当前着力构建面向群笼猕猴的实用视觉感知流程，将个体检测、个体识别、关键点估计、行为理解与长期多摄像头监测衔接起来。',
   researchTitle: '研究方向', researchDescription: '围绕动物视觉感知、高效视觉与多模态遥感形成六条相互关联的研究主线。',
@@ -42,7 +43,7 @@ const copy = lang === 'en' ? {
         {profile.bio[lang].map((paragraph) => <p>{paragraph}</p>)}
       </div>
       <aside class="current-work">
-        <h3>{copy.currentTitle}</h3>
+        <h3><Icon name="project" />{copy.currentTitle}</h3>
         <p>{copy.currentText}</p>
       </aside>
     </section>

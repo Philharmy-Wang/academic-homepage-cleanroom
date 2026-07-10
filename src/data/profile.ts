@@ -1,7 +1,7 @@
 import type { BilingualText } from './types';
 
 export const profile = {
-  name: { en: 'Guanbo Wang', zh: '王冠博' },
+  name: { en: 'Guanbo Wang', zh: 'Guanbo Wang' },
   position: { en: 'Assistant Research Fellow', zh: '助理研究员' },
   affiliation: {
     en: 'Kunming Institute of Zoology, Chinese Academy of Sciences',
@@ -20,7 +20,7 @@ export const profile = {
       'His current research develops computer vision methods for non-human primate perception and behavior understanding, including macaque detection, individual identification, pose estimation, cross-view identity association, and long-term multi-camera monitoring. His earlier work addressed lightweight object detection, multimodal remote sensing, forest wildfire detection, and edge deployment.',
     ],
     zh: [
-      '王冠博，博士，中国科学院昆明动物研究所助理研究员，毕业于云南大学信息与通信工程专业。',
+      'Guanbo Wang，博士，中国科学院昆明动物研究所助理研究员，毕业于云南大学信息与通信工程专业。',
       '当前主要开展面向非人灵长类视觉感知与行为理解的计算机视觉研究，关注群笼猕猴检测、个体识别、关键点检测、跨视角身份关联与长期多摄像头监测。此前的研究涵盖轻量化目标检测、多模态遥感、森林火灾检测与边缘端部署。',
     ],
   },

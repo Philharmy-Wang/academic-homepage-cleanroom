@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">Lightweight forest-fire detector abstract thumbnail</title>
+  <desc id="desc">Synthetic scene tiles pass through a compact network toward a forest-fire detection box.</desc>
+  <rect width="640" height="400" rx="28" fill="#f3f7fb"/>
+  <text x="64" y="55" fill="#315b7d" font-family="Segoe UI,Arial,sans-serif" font-size="24" font-weight="700">Lightweight Fire Detection</text>
+  <rect x="64" y="102" width="182" height="196" rx="16" fill="#fff" stroke="#6f8da5" stroke-width="3"/>
+  <g fill="#eaf1f7"><rect x="82" y="120" width="68" height="68" rx="8"/><rect x="160" y="120" width="68" height="68" rx="8"/><rect x="82" y="198" width="68" height="82" rx="8"/><rect x="160" y="198" width="68" height="82" rx="8"/></g>
+  <g fill="none" stroke="#315b7d" stroke-width="3"><path d="M88 177l25-35 31 35M166 177l24-29 32 29M88 269l26-43 30 43M166 269l21-36 35 36"/></g>
+  <g fill="#fff" stroke="#315b7d" stroke-width="3"><circle cx="324" cy="138" r="25"/><circle cx="324" cy="200" r="25"/><circle cx="324" cy="262" r="25"/></g>
+  <path d="M246 200h52m51-62l46 42m-46 20h46m-46 62l46-42" fill="none" stroke="#315b7d" stroke-width="4" stroke-linecap="round"/>
+  <rect x="396" y="112" width="180" height="176" rx="16" fill="#fff" stroke="#6f8da5" stroke-width="3"/>
+  <path d="M418 261l46-63 35 42 31-52 28 73" fill="none" stroke="#315b7d" stroke-width="4"/>
+  <rect x="478" y="151" width="63" height="78" rx="5" fill="none" stroke="#a75017" stroke-width="4"/>
+  <path d="M502 213c-13-18 8-29 4-45 20 14 25 32 13 48-8 10-21 9-25-1-3-7 0-13 4-17 0 7 1 12 4 15z" fill="#a75017"/>
+  <text x="64" y="352" fill="#536575" font-family="Segoe UI,Arial,sans-serif" font-size="16">synthetic learning · compact architecture · real-time inference</text>
+</svg>

@@ -12,11 +12,12 @@ import ExternalLink from './ExternalLink.astro';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
+const projectPeriod = (period: string | { en: string; zh: string } | undefined) => typeof period === 'string' ? period : period?.[lang];
 const copy = lang === 'en' ? {
   title: 'Curriculum Vitae', description: 'Printable academic curriculum vitae of Guanbo Wang.', intro: 'A concise, print-friendly academic record.', eyebrow: 'Academic CV',
   profile: 'Profile', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
 } : {
-  title: '个人履历', description: '王冠博的可打印学术履历。', intro: '简明、适合打印的学术履历。', eyebrow: '学术履历',
+  title: '个人履历', description: 'Guanbo Wang 的可打印学术履历。', intro: '简明、适合打印的学术履历。', eyebrow: '学术履历',
   profile: '个人信息', interests: '研究方向', employment: '工作经历', education: '教育经历', grants: '代表性项目资助', publications: '代表性论文', patents: '专利', honors: '荣誉奖励', contact: '联系方式',
 };
 ---
@@ -42,7 +43,7 @@ const copy = lang === 'en' ? {
   </section>
   <section class="cv-section" aria-labelledby="cv-grants">
     <h2 id="cv-grants">{copy.grants}</h2>
-    <div class="timeline-rows">{projects.filter((item) => item.group === 'current' || item.group === 'funded').map((item) => <div class="cv-row"><strong>{item.period}</strong><span>{item.title[lang]} — {item.role[lang]}</span></div>)}</div>
+    <div class="timeline-rows">{projects.filter((item) => item.group === 'current' || item.group === 'funded').map((item) => <div class="cv-row"><strong>{projectPeriod(item.period)}</strong><span>{item.title[lang]} — {item.role[lang]}</span></div>)}</div>
   </section>
   <section class="cv-section" aria-labelledby="cv-publications">
     <h2 id="cv-publications">{copy.publications}</h2>

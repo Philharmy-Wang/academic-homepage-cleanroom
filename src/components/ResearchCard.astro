@@ -2,13 +2,14 @@
 import type { Language } from '../data/types';
 import type { ResearchArea } from '../data/research';
 import { localizedRoute } from '../utils/paths';
+import Icon from './Icon.astro';
 
 interface Props { area: ResearchArea; lang: Language; compact?: boolean; }
 const { area, lang, compact = false } = Astro.props;
 ---
 
 <article class:list={['research-card', { compact }]}>
-  <div class="card-index" aria-hidden="true">{area.id.slice(0, 2).toUpperCase()}</div>
+  <div class="research-card-top"><span class="research-icon" aria-hidden="true"><Icon name={area.icon} /></span><span class="card-index" aria-hidden="true">{area.id.slice(0, 2).toUpperCase()}</span></div>
   <h3>{area.title[lang]}</h3>
   <p>{area.problem[lang]}</p>
   {!compact && <p class="card-detail"><strong>{lang === 'en' ? 'Method focus:' : '方法关注：'}</strong> {area.method[lang]}</p>}
