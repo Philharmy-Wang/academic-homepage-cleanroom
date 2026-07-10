@@ -100,7 +100,10 @@ The responsive suite asserts dynamic Scholar data, co-authored CAS/TOP inclusion
 
 ## 20. GitHub Actions
 
-Pending deployment. The implementation run ID will be inserted after the first `main` deployment succeeds; no ID is guessed in advance.
+- Implementation commit: `d548049b3498b63d55c86c40c3445679a5387cd6`.
+- Quality run ID: **29083145030** — success.
+- Deploy to GitHub Pages run ID: **29083144951** — success.
+- Online readback: all 14 English/Chinese routes returned HTTP 200. The deployed HTML contains the unified Chinese appointment, Scholar items 20, Scholar citations 362, UC-Mamba, the AIBDF paper, four resource cards, and the explicitly labelled OpenAlex trend.
 
 ## 21–23. Safety declarations
 
