@@ -60,10 +60,24 @@ Verification date: `2026-07-10`
 - Mathematical Contest in Modeling: [COMAP](https://www.comap.com/contests/mcm-icm) describes MCM/ICM as international contests. The site uses `International Competition / 国际赛事` and translates Honorable Mention as `荣誉奖`.
 - Award outcomes and years remain author-provided. No certificate numbers, scans, or other team-member names were used.
 
-## Journal indicators
+## Journal indicators — Polish v2.1 audit
 
-The migrated journal badges did not contain their metric edition year. Because no open, authoritative source was available for every JCR/CAS/JIF value in this pass, the raw historical values remain in the data for audit continuity but are withheld from public cards. A badge is rendered only when both `verifiedYear` and `source` are present.
+Public badges now require a source plus either an explicit metric year (`verifiedYear`) or an access-month snapshot (`verifiedAt`). Unqualified historical values remain withheld.
+
+| Journal / records | Public indicators | Time qualifier | Source and conservative handling |
+|---|---|---|---|
+| IEEE Transactions on Circuits and Systems for Video Technology (`dpmnet`) | JCR Q1; IF 8.3; 5-Year IF 7.1 | 2023 metrics | [IEEE Title List, September 2024](https://open.ieee.org/wp-content/uploads/IEEE-Title-List-September-2024.pdf). The institutional profile reports a newer IF value; the site uses the dated IEEE table instead. |
+| IEEE Transactions on Geoscience and Remote Sensing (`rfwnet`) | JCR Q1; IF 7.5; 5-Year IF 7.6 | 2023 metrics | Same official IEEE title list. |
+| Expert Systems with Applications (`m4sfwd`, `forest-fire-synthetic-images`) | IF 7.5 | Publisher snapshot accessed 2026-07 | [Elsevier journal page](https://www.sciencedirect.com/journal/expert-systems-with-applications). The page does not expose a JCR edition year or 5-Year IF, so those fields are not shown. |
+| Digital Signal Processing (`fighting-terrorism-yolov4`) | IF 3.0 | Publisher snapshot accessed 2026-07 | [Elsevier journal insights](https://www.sciencedirect.com/journal/digital-signal-processing/about/insights). JCR quartile and 5-Year IF remain hidden. |
+| IET Image Processing (`trident-yolo`) | IF 2.4 | Publisher snapshot accessed 2026-07 | [Wiley/IET journal page](https://ietresearch.onlinelibrary.wiley.com/journal/17519667). |
+| IET Computer Vision (`trc-yolo`) | IF 1.3 | Publisher snapshot accessed 2026-07 | [Wiley/IET journal page](https://ietresearch.onlinelibrary.wiley.com/journal/17519640). |
+| Four selected records (`dpmnet`, `rfwnet`, `m4sfwd`, `forest-fire-synthetic-images`) | CAS Zone 1 · TOP | Institutional-profile snapshot accessed 2026-07 | [Yunnan University faculty profile](https://www.ise.ynu.edu.cn/faculty/54/). This is explicitly presented as a dated institutional-profile snapshot, not as an independently reproduced CAS journal table. |
+
+The summary count of four “CAS Zone 1 · TOP” publications is derived only from the four sourced records above. No JCR, CAS, IF, or 5-Year IF value is guessed for the remaining records.
 
 ## Publication image rights
 
 Five selected-publication thumbnails are original abstract SVG illustrations created for this site. They contain only generic diagram elements and concepts derived from titles and bibliographic abstracts. No publisher figure, PDF screenshot, journal cover, Google image result, or third-party raster asset was copied.
+
+The author-owned `Philharmy-Wang/M4SFWD` repository was also checked during Polish v2.1. It contains README and utility files but no reusable architecture image and no declared repository license. Therefore no image was copied from it. All five thumbnails remain temporary site-original placeholders pending user-provided architecture/method screenshots.

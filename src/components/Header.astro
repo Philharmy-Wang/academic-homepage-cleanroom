@@ -10,13 +10,9 @@ const { lang, route } = Astro.props;
 
 <header class="site-header" data-site-header>
   <div class="header-inner">
-    <a class="site-name" href={localizedRoute('/', lang)} aria-label={lang === 'en' ? 'Guanbo Wang home' : 'Guanbo Wang 主页'}>
-      <span>Guanbo Wang</span>
+    <a class="site-name" href={localizedRoute('/', lang)} aria-label={lang === 'en' ? 'Guanbo Wang home' : '王冠博主页'}>
+      <span>{lang === 'en' ? 'Guanbo Wang' : '王冠博'}</span>
     </a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
-      <span>{lang === 'en' ? 'Menu' : '菜单'}</span>
-      <span class="menu-icon" aria-hidden="true"></span>
-    </button>
     <nav id="site-navigation" class="site-nav" aria-label={lang === 'en' ? 'Primary navigation' : '主导航'}>
       <ul>
         {navigation.map((item) => (
@@ -27,8 +23,14 @@ const { lang, route } = Astro.props;
           </li>
         ))}
       </ul>
-      <LanguageSwitch lang={lang} route={route} />
     </nav>
+    <div class="header-actions">
+      <LanguageSwitch lang={lang} route={route} />
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+        <span>{lang === 'en' ? 'Menu' : '菜单'}</span>
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+    </div>
   </div>
 </header>
 

@@ -1,5 +1,5 @@
 ---
-import type { Language } from '../data/types';
+import type { Language, Project } from '../data/types';
 import { profile } from '../data/profile';
 import { researchAreas } from '../data/research';
 import { projects } from '../data/projects';
@@ -8,46 +8,59 @@ import { patents } from '../data/patents';
 import { awards } from '../data/awards';
 import ContentLayout from '../layouts/ContentLayout.astro';
 import PublicationCard from './PublicationCard.astro';
+import PublicationSummary from './PublicationSummary.astro';
 import ExternalLink from './ExternalLink.astro';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
 const projectPeriod = (period: string | { en: string; zh: string } | undefined) => typeof period === 'string' ? period : period?.[lang];
+const startKey = (project: Project) => Number((projectPeriod(project.period)?.match(/\d{4}(?:\.\d{2})?/)?.[0] ?? '0').replace('.', ''));
+const selectedGrants = projects.filter((item) => item.group !== 'participated').sort((left, right) => startKey(right) - startKey(left));
 const copy = lang === 'en' ? {
-  title: 'Curriculum Vitae', description: 'Printable academic curriculum vitae of Guanbo Wang.', intro: 'A concise, print-friendly academic record.', eyebrow: 'Academic CV',
-  profile: 'Profile', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
+  title: 'Curriculum Vitae', description: 'Printable academic curriculum vitae of Guanbo Wang.', intro: 'A structured, print-friendly academic record.', eyebrow: 'Academic CV',
+  profile: 'Profile', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants and Projects', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
 } : {
-  title: '个人履历', description: 'Guanbo Wang 的可打印学术履历。', intro: '简明、适合打印的学术履历。', eyebrow: '学术履历',
+  title: '个人履历', description: '王冠博的可打印学术履历。', intro: '结构清晰、适合网页浏览与打印的学术履历。', eyebrow: '学术履历',
   profile: '个人信息', interests: '研究方向', employment: '工作经历', education: '教育经历', grants: '代表性项目资助', publications: '代表性论文', patents: '专利', honors: '荣誉奖励', contact: '联系方式',
 };
 ---
 <ContentLayout lang={lang} route="/cv/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
-  <section class="cv-section" aria-labelledby="cv-profile">
-    <h2 id="cv-profile">{copy.profile}</h2>
-    <div class="cv-profile">
-      <div><h2>{profile.name[lang]}</h2><p><strong>{profile.position[lang]}</strong><br />{profile.affiliation[lang]}</p></div>
-      <div><a href={`mailto:${profile.email}`}>{profile.email}</a><br /><ExternalLink href={profile.scholar}>Google Scholar</ExternalLink><br /><ExternalLink href={profile.github}>GitHub</ExternalLink></div>
-    </div>
+  <section class="cv-section cv-profile-section" aria-labelledby="cv-profile">
+    <h2 class="sr-only" id="cv-profile">{copy.profile}</h2>
+    <header class="cv-profile">
+      <div class="cv-identity">
+        <p class="eyebrow">{copy.eyebrow}</p>
+        <h2>{profile.name[lang]}</h2>
+        <p><strong>{profile.position[lang]}</strong></p>
+        <p>{profile.affiliation[lang]}</p>
+      </div>
+      <address class="cv-contact-card">
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <ExternalLink href={profile.scholar}>Google Scholar</ExternalLink>
+        <ExternalLink href={profile.github}>GitHub</ExternalLink>
+      </address>
+    </header>
+    <PublicationSummary lang={lang} compact />
   </section>
   <section class="cv-section" aria-labelledby="cv-interests">
     <h2 id="cv-interests">{copy.interests}</h2>
-    <ul>{researchAreas.map((area) => <li>{area.title[lang]}</li>)}</ul>
+    <ul class="cv-interest-list">{researchAreas.map((area) => <li>{area.title[lang]}</li>)}</ul>
   </section>
   <section class="cv-section" aria-labelledby="cv-employment">
     <h2 id="cv-employment">{copy.employment}</h2>
-    <div class="timeline-rows">{profile.employment.map((item) => <div class="cv-row"><strong>{item.period[lang]}</strong><span>{item.title[lang]}, {item.organization[lang]}</span></div>)}</div>
+    <div class="timeline-rows">{profile.employment.map((item) => <div class="cv-row"><strong>{item.period[lang]}</strong><div><b>{item.title[lang]}</b><span>{item.organization[lang]}</span></div></div>)}</div>
   </section>
   <section class="cv-section" aria-labelledby="cv-education">
     <h2 id="cv-education">{copy.education}</h2>
-    <div class="timeline-rows">{profile.education.map((item) => <div class="cv-row"><strong>{item.period}</strong><span>{item.institution[lang]}, {item.degree[lang]}</span></div>)}</div>
+    <div class="timeline-rows">{profile.education.map((item) => <div class="cv-row"><strong>{item.period}</strong><div><b>{item.degree[lang]}</b><span>{item.institution[lang]}</span></div></div>)}</div>
   </section>
   <section class="cv-section" aria-labelledby="cv-grants">
     <h2 id="cv-grants">{copy.grants}</h2>
-    <div class="timeline-rows">{projects.filter((item) => item.group === 'current' || item.group === 'funded').map((item) => <div class="cv-row"><strong>{projectPeriod(item.period)}</strong><span>{item.title[lang]} — {item.role[lang]}</span></div>)}</div>
+    <div class="timeline-rows">{selectedGrants.map((item) => <div class="cv-row"><strong>{projectPeriod(item.period)}</strong><div><b>{item.title[lang]}</b><span>{item.project[lang]} · {item.role[lang]}</span></div></div>)}</div>
   </section>
-  <section class="cv-section" aria-labelledby="cv-publications">
+  <section class="cv-section cv-publications" aria-labelledby="cv-publications">
     <h2 id="cv-publications">{copy.publications}</h2>
-    <div class="publication-list">{selectedPublications.map((publication) => <PublicationCard publication={publication} lang={lang} compact />)}</div>
+    <div class="publication-list">{selectedPublications.map((publication, index) => <PublicationCard publication={publication} lang={lang} compact cv number={index + 1} showFigure={false} />)}</div>
   </section>
   <section class="cv-section" aria-labelledby="cv-patents">
     <h2 id="cv-patents">{copy.patents}</h2>
@@ -55,7 +68,7 @@ const copy = lang === 'en' ? {
   </section>
   <section class="cv-section" aria-labelledby="cv-honors">
     <h2 id="cv-honors">{copy.honors}</h2>
-    <div class="timeline-rows">{awards.filter((award) => award.group === 'academic').slice(0, 5).map((award) => <div class="cv-row"><strong>{award.year}</strong><span>{award.title[lang]}</span></div>)}</div>
+    <div class="timeline-rows">{awards.filter((award) => award.group === 'academic').slice(0, 5).map((award) => <div class="cv-row"><strong>{award.year}</strong><div><b>{award.title[lang]}</b></div></div>)}</div>
   </section>
   <section class="cv-section" aria-labelledby="cv-contact">
     <h2 id="cv-contact">{copy.contact}</h2>

@@ -28,7 +28,7 @@ const jsonLd = isHome ? {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: profile.name.en,
-  alternateName: 'Wang Guanbo',
+  alternateName: [profile.name.zh, 'Wang Guanbo'],
   affiliation: { '@type': 'Organization', name: profile.affiliation.en },
   jobTitle: profile.position.en,
   email: `mailto:${profile.email}`,

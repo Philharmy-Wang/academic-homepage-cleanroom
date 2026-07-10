@@ -68,7 +68,8 @@ for (const publication of publications) {
   for (const metric of publication.metrics) {
     if (invalidPlaceholders.has(metric.value)) errors.push(`${publication.id} 指标 ${metric.label} 未核验`);
     if (metric.verifiedYear !== undefined && (!Number.isInteger(metric.verifiedYear) || metric.verifiedYear < 1900 || metric.verifiedYear > 2100)) errors.push(`${publication.id} 指标 ${metric.label} 年份无效`);
-    if (metric.verifiedYear !== undefined && !metric.source?.trim()) errors.push(`${publication.id} 指标 ${metric.label} 缺少来源`);
+    if (metric.verifiedAt !== undefined && !/^\d{4}-\d{2}$/.test(metric.verifiedAt)) errors.push(`${publication.id} 指标 ${metric.label} 快照月份无效`);
+    if ((metric.verifiedYear !== undefined || metric.verifiedAt !== undefined) && !metric.source?.trim()) errors.push(`${publication.id} 指标 ${metric.label} 缺少来源`);
   }
   if (publication.figure) {
     requireBilingual(publication.figure.alt, `${publication.id}.figure.alt`);
@@ -95,12 +96,15 @@ for (const award of awards) {
   if (award.category && !awardCategories.has(`${award.category.en}|${award.category.zh}`)) errors.push(`${award.id} 赛事类别无效：${award.category.en}/${award.category.zh}`);
 }
 for (const item of datasets) { requireBilingual(item.title, `${item.id}.title`); requireBilingual(item.status, `${item.id}.status`); }
-for (const item of news) requireBilingual(item.title, `news.${item.date}`);
+for (const item of news) {
+  requireBilingual(item.title, `news.${item.date}`);
+  if (!/^\d{4}-\d{2}$/.test(item.date)) errors.push(`news 日期必须精确到月份：${item.date}`);
+}
 
 checkUrl(profile.github, 'profile.github');
 checkUrl(profile.scholar, 'profile.scholar');
 checkUrl(`mailto:${profile.email}`, 'profile.email');
-if (profile.name.zh !== 'Guanbo Wang') errors.push('中文页面姓名必须为 Guanbo Wang');
+if (profile.name.zh !== '王冠博') errors.push('中文人物展示名必须为王冠博');
 for (const publication of publications) if (!publication.authors.some((author) => author.self && ['Guanbo Wang', 'Wang Guanbo'].includes(author.name))) errors.push(`${publication.id} 本人作者名不符合公开显示规则`);
 
 if (citations.source !== 'OpenAlex') errors.push('citation 数据源必须为 OpenAlex');

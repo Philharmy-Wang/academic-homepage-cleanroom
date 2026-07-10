@@ -21,6 +21,7 @@ export interface PublicationMetric {
   label: string;
   value: string;
   verifiedYear?: number;
+  verifiedAt?: string;
   source?: string;
 }
 

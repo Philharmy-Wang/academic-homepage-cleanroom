@@ -1,6 +1,6 @@
 ---
-interface Props { label: string; value: string; }
-const { label, value } = Astro.props;
+interface Props { label: string; value: string; source?: string | undefined; }
+const { label, value, source } = Astro.props;
 ---
 
-<span class="metric-badge"><span>{label}</span> {value}</span>
+<span class="metric-badge" title={source}><span>{label}</span> {value}</span>

@@ -9,7 +9,7 @@ const { area, lang, compact = false } = Astro.props;
 ---
 
 <article class:list={['research-card', { compact }]}>
-  <div class="research-card-top"><span class="research-icon" aria-hidden="true"><Icon name={area.icon} /></span><span class="card-index" aria-hidden="true">{area.id.slice(0, 2).toUpperCase()}</span></div>
+  <div class="research-card-top"><span class="research-icon" aria-hidden="true"><Icon name={area.icon} /></span><span class="research-rule" aria-hidden="true"></span></div>
   <h3>{area.title[lang]}</h3>
   <p>{area.problem[lang]}</p>
   {!compact && <p class="card-detail"><strong>{lang === 'en' ? 'Method focus:' : '方法关注：'}</strong> {area.method[lang]}</p>}

@@ -5,6 +5,7 @@ import ContentLayout from '../layouts/ContentLayout.astro';
 import CitationTrend from './CitationTrend.astro';
 import Icon from './Icon.astro';
 import PublicationCard from './PublicationCard.astro';
+import PublicationSummary from './PublicationSummary.astro';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
@@ -14,24 +15,26 @@ const groups: Array<{ key: string; title: { en: string; zh: string }; items: Pub
   { key: 'coauthored', title: { en: 'Co-authored Publications', zh: '合作论文' }, items: publications.filter((item) => item.group === 'Co-authored Publications') },
   { key: 'chinese', title: { en: 'Chinese Publications', zh: '中文论文' }, items: publications.filter((item) => item.group === 'Chinese Publications') },
 ];
+const numberById = new Map(groups.flatMap((group) => group.items).map((publication, index) => [publication.id, index + 1]));
 const copy = lang === 'en' ? {
-  title: 'Publications', description: 'Selected and complete publication records for Guanbo Wang, with authorship, contributions, public links, and citation snapshots.',
+  title: 'Publications', description: 'Selected and complete publication records for Guanbo Wang, with formal authorship, audited journal indicators, public links, and OpenAlex citation snapshots.',
   intro: 'Research outputs across remote sensing, multimodal vision, efficient detection, image fusion, tracking, and applied visual intelligence.',
   eyebrow: 'Research outputs', star: '* Corresponding author.',
 } : {
-  title: '论文', description: 'Guanbo Wang 的代表性及完整论文记录，包含作者、本人贡献、公开链接与引用快照。',
+  title: '论文', description: '王冠博的代表性及完整论文记录，包含正式作者署名、已核验期刊指标、公开链接与 OpenAlex 引用快照。',
   intro: '研究成果涵盖遥感、多模态视觉、高效检测、图像融合、目标跟踪与视觉智能应用。',
   eyebrow: '研究成果', star: '* 通讯作者。',
 };
 ---
 
 <ContentLayout lang={lang} route="/publications/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
+  <PublicationSummary lang={lang} />
   {groups.map((group) => (
     <>
       <section class="content-section publication-group" aria-labelledby={`group-${group.key}`} data-publication-group={group.key}>
         <h2 id={`group-${group.key}`}><Icon name="paper" />{group.title[lang]}</h2>
         <div class="publication-list">
-          {group.items.map((publication) => <PublicationCard publication={publication} lang={lang} />)}
+          {group.items.map((publication) => <PublicationCard publication={publication} lang={lang} number={numberById.get(publication.id)} />)}
         </div>
       </section>
       {group.key === 'selected' && <CitationTrend lang={lang} />}

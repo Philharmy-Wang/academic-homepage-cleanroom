@@ -90,15 +90,16 @@ for (const route of routes) {
     const bodyText = await page.locator('body').innerText();
     for (const prohibited of developerCopy) expect(bodyText).not.toContain(prohibited);
     if (route.startsWith('zh/')) {
-      expect(bodyText).not.toContain('王冠博');
-      expect(await page.title()).not.toContain('王冠博');
-      expect(await page.locator('meta[name="description"]').getAttribute('content')).not.toContain('王冠博');
+      expect(bodyText).toContain('王冠博');
+      expect(await page.title()).toContain('王冠博');
+      expect(await page.locator('meta[name="description"]').getAttribute('content')).toContain('王冠博');
     }
 
     if (route === '' || route === 'zh/') {
       const hero = page.locator('.hero');
       await expect(hero).toBeVisible();
-      await expect(hero.locator('h1')).toHaveText('Guanbo Wang');
+      await expect(hero.locator('h1')).toHaveText(route === 'zh/' ? '王冠博' : 'Guanbo Wang');
+      await expect(hero.locator('.hero-actions a')).toHaveCount(4);
       await expect(hero.locator('.research-icon, .hero-scope-icon').first()).toBeVisible();
       const headingBox = await hero.locator('h1').boundingBox();
       const portraitBox = await hero.locator('.portrait-panel').boundingBox();
@@ -107,6 +108,9 @@ for (const route of routes) {
       if (testInfo.project.use.viewport!.width > 720) expect(headingBox!.x + headingBox!.width).toBeLessThanOrEqual(portraitBox!.x + 1);
       else expect(headingBox!.y + headingBox!.height).toBeLessThan(portraitBox!.y);
       await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+      await expect(page.locator('.publication-summary .summary-stat')).toHaveCount(4);
+      await expect(page.locator('.timeline time')).toHaveCount(6);
+      for (const date of await page.locator('.timeline time').allTextContents()) expect(date).toMatch(/^\d{4}-\d{2}$/);
     }
 
     if (route === 'research/' || route === 'zh/research/') await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
@@ -118,9 +122,15 @@ for (const route of routes) {
       const coauthored = page.locator('[data-publication-group="coauthored"]');
       await expect(coauthored.getByText('Multi-Scale Enhanced Contextual Transformer Network for Forest Fire Detection', { exact: true })).toBeVisible();
       await expect(page.locator('.publication-figure img')).toHaveCount(5);
+      await expect(page.locator('.publication-summary .summary-stat')).toHaveCount(4);
+      await expect(page.locator('.contribution')).toHaveCount(0);
+      expect(await page.locator('.metric-badge').count()).toBeGreaterThan(0);
+      if (route.startsWith('zh/')) {
+        for (const selfAuthor of await page.locator('.self-author').allTextContents()) expect(selfAuthor.replace('*', '')).toBe('Guanbo Wang');
+      }
       expect(await page.locator('.publication-card:not(.has-figure)').count()).toBeGreaterThan(0);
       await expect(page.locator('.publication-card:not(.has-figure)').first().locator('.publication-body')).toBeVisible();
-      const trend = page.locator('.citation-plot, .citation-fallback');
+      const trend = page.locator('.citation-chart-wrap, .citation-fallback');
       await expect(trend).toBeVisible();
       const trendBox = await trend.boundingBox();
       const trendSectionBox = await page.locator('.citation-trend').boundingBox();
@@ -152,7 +162,13 @@ for (const route of routes) {
       : `/academic-homepage-cleanroom/zh/${unprefixed}`;
     expect(href).toBe(expectedPeer);
 
-    if (testInfo.project.use.viewport!.width > 940) await expect(languageSwitch).toBeVisible();
+    await expect(languageSwitch).toBeVisible();
+    await expect(languageSwitch.locator('xpath=..')).toHaveClass(/header-actions/);
+    if (testInfo.project.use.viewport!.width > 1040) {
+      const navBox = await page.locator('.site-nav').boundingBox();
+      expect(navBox).not.toBeNull();
+      expect(Math.abs((navBox!.x + navBox!.width / 2) - testInfo.project.use.viewport!.width / 2)).toBeLessThan(8);
+    }
 
     const buttons = page.locator('a.button');
     for (let index = 0; index < await buttons.count(); index += 1) {
@@ -162,7 +178,7 @@ for (const route of routes) {
       expect(box?.height ?? 0).toBeGreaterThan(0);
     }
 
-    if (testInfo.project.use.viewport!.width <= 940) {
+    if (testInfo.project.use.viewport!.width <= 1040) {
       const menu = page.locator('.menu-toggle');
       await expect(menu).toBeVisible();
       await expect(menu).toHaveAttribute('aria-expanded', 'false');

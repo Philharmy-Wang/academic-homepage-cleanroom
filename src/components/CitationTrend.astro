@@ -11,24 +11,41 @@ const counts = Object.entries(citations.aggregate.countsByYear as Record<string,
   .filter(([year, count]) => /^\d{4}$/.test(year) && count >= 0)
   .sort(([left], [right]) => left.localeCompare(right))
   .slice(-7);
-const maximum = Math.max(...counts.map(([, count]) => count), 1);
 const workCount = Object.keys(citations.works).length;
 const available = counts.length > 0 && citations.aggregate.totalCitations > 0;
 const updated = citations.updatedAt
   ? new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'zh-CN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(citations.updatedAt))
   : null;
+const width = 680;
+const height = 230;
+const inset = { top: 28, right: 24, bottom: 38, left: 42 };
+const maximum = Math.max(...counts.map(([, count]) => count), 1);
+const chartPoints = counts.map(([year, count], index) => ({
+  year,
+  count,
+  x: counts.length === 1 ? width / 2 : inset.left + (index / (counts.length - 1)) * (width - inset.left - inset.right),
+  y: inset.top + (1 - count / maximum) * (height - inset.top - inset.bottom),
+}));
+const linePath = chartPoints.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
+const areaPath = chartPoints.length
+  ? `${linePath} L ${chartPoints.at(-1)!.x.toFixed(1)} ${height - inset.bottom} L ${chartPoints[0]!.x.toFixed(1)} ${height - inset.bottom} Z`
+  : '';
+const gridLines = [0, 0.25, 0.5, 0.75, 1].map((ratio) => ({
+  y: inset.top + ratio * (height - inset.top - inset.bottom),
+  value: Math.round(maximum * (1 - ratio)),
+}));
 const copy = lang === 'en' ? {
-  title: 'Citation Trend', eyebrow: 'Public scholarly metadata',
-  summary: `OpenAlex currently links ${workCount} works and records ${citations.aggregate.totalCitations} citations in total. The chart shows citations received by year.`,
+  title: 'Citation trajectory', eyebrow: 'Public scholarly metadata', total: 'Total citations', works: 'Matched works',
+  summary: `OpenAlex currently links ${workCount} works and records ${citations.aggregate.totalCitations} citations in total. The line shows citations received by year.`,
   fallback: 'A verified citation trend is not available yet. Publication links remain available below.',
-  footnote: 'Citation trends are aggregated from public scholarly metadata sources and may differ from Google Scholar.',
-  updated: 'OpenAlex snapshot', scholar: 'View Google Scholar profile',
+  footnote: 'OpenAlex public metadata; totals may differ from Google Scholar.',
+  updated: 'Snapshot', scholar: 'Google Scholar profile',
 } : {
-  title: '引用趋势', eyebrow: '公开学术元数据',
-  summary: `OpenAlex 当前匹配 ${workCount} 篇论文，记录总引用 ${citations.aggregate.totalCitations} 次。图中展示各年度新增引用。`,
+  title: '引用趋势', eyebrow: '公开学术元数据', total: '总引用', works: '匹配论文',
+  summary: `OpenAlex 当前匹配 ${workCount} 篇论文，记录总引用 ${citations.aggregate.totalCitations} 次。折线展示各年度新增引用。`,
   fallback: '当前暂无可核验的引用趋势数据，论文链接仍可在下方访问。',
-  footnote: '引用趋势根据公开学术元数据聚合，可能与 Google Scholar 统计存在差异。',
-  updated: 'OpenAlex 数据快照', scholar: '查看 Google Scholar 主页',
+  footnote: '数据来自 OpenAlex 公开学术元数据，统计口径可能与 Google Scholar 不同。',
+  updated: '数据快照', scholar: 'Google Scholar 主页',
 };
 ---
 
@@ -40,19 +57,31 @@ const copy = lang === 'en' ? {
     </div>
     <ExternalLink class="citation-scholar-link" href={profile.scholar}><Icon name="scholar" />{copy.scholar}</ExternalLink>
   </div>
+  <div class="citation-overview">
+    <div><strong>{citations.aggregate.totalCitations}</strong><span>{copy.total}</span></div>
+    <div><strong>{workCount}</strong><span>{copy.works}</span></div>
+  </div>
   {available ? (
-    <>
-      <p class="sr-only">{copy.summary}</p>
-      <div class="citation-plot" role="img" aria-label={copy.summary}>
-        {counts.map(([year, count]) => (
-          <div class="citation-column">
-            <span class="citation-value">{count}</span>
-            <span class="citation-bar-track"><span class="citation-bar" style={`--bar-height: ${Math.max(4, Math.round((count / maximum) * 100))}%`}></span></span>
-            <span class="citation-year">{year}</span>
-          </div>
+    <div class="citation-chart-wrap">
+      <p class="sr-only" id={`citation-summary-${lang}`}>{copy.summary}</p>
+      <svg class="citation-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-describedby={`citation-summary-${lang}`}>
+        {gridLines.map((line) => (
+          <g class="chart-gridline">
+            <line x1={inset.left} x2={width - inset.right} y1={line.y} y2={line.y} />
+            <text x={inset.left - 9} y={line.y + 4} text-anchor="end">{line.value}</text>
+          </g>
         ))}
-      </div>
-    </>
+        <path class="chart-area" d={areaPath} />
+        <path class="chart-line" d={linePath} />
+        {chartPoints.map((point) => (
+          <g class="chart-point">
+            <circle cx={point.x} cy={point.y} r="4.5" />
+            <text class="chart-value" x={point.x} y={point.y - 11} text-anchor="middle">{point.count}</text>
+            <text class="chart-year" x={point.x} y={height - 13} text-anchor="middle">{point.year}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
   ) : <p class="citation-fallback">{copy.fallback}</p>}
   <div class="citation-caption"><p>{copy.footnote}</p>{updated && <p>{copy.updated}: {updated} UTC</p>}</div>
 </section>

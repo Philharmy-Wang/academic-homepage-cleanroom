@@ -1,17 +1,26 @@
 ---
 import type { Language, Project } from '../data/types';
-interface Props { project: Project; lang: Language; }
-const { project, lang } = Astro.props;
+import Icon from './Icon.astro';
+
+interface Props { project: Project; lang: Language; index?: number; }
+const { project, lang, index } = Astro.props;
 const period = typeof project.period === 'string' ? project.period : project.period?.[lang];
+const statusClass = project.status?.en === 'Ongoing' ? 'ongoing' : 'completed';
 ---
 
 <article class="project-card" id={project.id}>
-  <h3>{project.title[lang]}</h3>
-  <p class="project-name">{project.project[lang]}</p>
-  {project.organization && <p class="organization">{project.organization[lang]}</p>}
-  <div class="project-meta">
-    {period && <span>{period}</span>}
-    {project.status && <span>{project.status[lang]}</span>}
-    <span>{project.role[lang]}</span>
+  <span class="project-marker" aria-hidden="true"><Icon name="project" /></span>
+  <div class="project-card-content">
+    <div class="project-card-kicker">
+      {index && <span>{String(index).padStart(2, '0')}</span>}
+      <span>{project.title[lang]}</span>
+    </div>
+    <h3>{project.project[lang]}</h3>
+    {project.organization && <p class="organization">{project.organization[lang]}</p>}
+    <div class="project-meta">
+      <span class="project-role">{project.role[lang]}</span>
+      {period && <span>{period}</span>}
+      {project.status && <span class:list={['project-status', statusClass]}>{project.status[lang]}</span>}
+    </div>
   </div>
 </article>

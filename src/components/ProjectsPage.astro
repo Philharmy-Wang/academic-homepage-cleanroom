@@ -1,31 +1,41 @@
 ---
-import type { Language } from '../data/types';
+import type { Language, Project } from '../data/types';
 import { projects } from '../data/projects';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import Icon from './Icon.astro';
 import ProjectCard from './ProjectCard.astro';
+
 interface Props { lang: Language; }
 const { lang } = Astro.props;
-const groupNames = {
-  current: { en: 'Current Primate Vision Research', zh: '当前灵长类视觉研究' },
-  funded: { en: 'Funded Projects and Talent Programs', zh: '资助项目与人才计划' },
-  previous: { en: 'Previous Wildfire and Multimodal Vision Projects', zh: '前期森林火灾与多模态视觉项目' },
-  participated: { en: 'Participated Projects', zh: '参与项目' },
-};
-const groups = Object.keys(groupNames) as Array<keyof typeof groupNames>;
+const periodValue = (project: Project) => typeof project.period === 'string' ? project.period : project.period?.en ?? '';
+const startKey = (project: Project) => Number((periodValue(project).match(/\d{4}(?:\.\d{2})?/)?.[0] ?? '0').replace('.', ''));
+const byStartDesc = (left: Project, right: Project) => startKey(right) - startKey(left);
+const ledProjects = projects.filter((project) => project.group !== 'participated').sort(byStartDesc);
+const participatedProjects = projects.filter((project) => project.group === 'participated').sort((left, right) => {
+  const level = (project: Project) => /National|China /i.test(project.title.en) ? 0 : /Yunnan University/i.test(project.title.en) ? 1 : 2;
+  return level(left) - level(right) || byStartDesc(left, right);
+});
+const sections = [
+  { key: 'led', title: { en: 'Principal-investigator Projects', zh: '主持项目' }, description: { en: 'Current and completed projects, ordered by start date.', zh: '按项目开始时间倒序排列的在研及已结题主持项目。' }, items: ledProjects },
+  { key: 'participated', title: { en: 'Participated Projects', zh: '参与项目' }, description: { en: 'National-level projects first, followed by Yunnan University projects; each tier is in reverse chronological order.', zh: '国家层面项目优先，其后为云南大学项目；各层级内按时间倒序排列。' }, items: participatedProjects },
+];
 const copy = lang === 'en' ? {
   title: 'Projects', description: 'Public research projects, grants, and talent programs led by or involving Guanbo Wang.',
-  intro: 'Current and completed research projects spanning primate vision, multimodal perception, wildfire detection, and efficient visual systems.', eyebrow: 'Research portfolio',
+  intro: 'A CV-style record of current and completed research spanning primate vision, multimodal perception, wildfire detection, and efficient visual systems.', eyebrow: 'Research portfolio',
 } : {
-  title: '科研项目', description: 'Guanbo Wang 主持或参与的公开科研项目、资助与人才计划。',
-  intro: '涵盖灵长类视觉、多模态感知、森林野火检测与高效视觉系统的在研及已结题项目。', eyebrow: '项目概览',
+  title: '科研项目', description: '王冠博主持或参与的公开科研项目、资助与人才计划。',
+  intro: '以学术履历形式呈现灵长类视觉、多模态感知、森林野火检测与高效视觉系统相关的在研及已结题项目。', eyebrow: '项目概览',
 };
 ---
 <ContentLayout lang={lang} route="/projects/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
-  {groups.map((group) => (
-    <section class="content-section" aria-labelledby={`project-${group}`}>
-      <h2 id={`project-${group}`}>{groupNames[group][lang]}</h2>
+  {sections.map((section) => (
+    <section class="content-section project-section" aria-labelledby={`project-${section.key}`}>
+      <div class="project-section-heading">
+        <span class="section-icon" aria-hidden="true"><Icon name="project" /></span>
+        <div><h2 id={`project-${section.key}`}>{section.title[lang]}</h2><p>{section.description[lang]}</p></div>
+      </div>
       <div class="project-list">
-        {projects.filter((project) => project.group === group).map((project) => <ProjectCard project={project} lang={lang} />)}
+        {section.items.map((project, index) => <ProjectCard project={project} lang={lang} index={index + 1} />)}
       </div>
     </section>
   ))}
