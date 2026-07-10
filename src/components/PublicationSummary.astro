@@ -1,26 +1,43 @@
 ---
 import type { Language } from '../data/types';
-import { publications } from '../data/publications';
-import citations from '../data/generated/citations.json';
+import { publicationStats } from '../data/publicationStats';
 
-interface Props { lang: Language; compact?: boolean; }
-const { lang, compact = false } = Astro.props;
-const soleFirstAuthorCount = publications.filter((item) => item.role.en === 'Sole First Author').length;
-const topCount = publications.filter((item) => item.metrics.some((metric) => metric.label === 'CAS' && metric.value.includes('TOP') && (metric.verifiedYear || metric.verifiedAt))).length;
-const stats = lang === 'en' ? [
-  { value: publications.length, label: 'Publications' },
-  { value: soleFirstAuthorCount, label: 'Sole first author' },
-  { value: topCount, label: 'CAS Zone 1 · TOP' },
-  { value: citations.aggregate.totalCitations, label: 'OpenAlex citations', accent: true },
+interface Props { lang: Language; compact?: boolean; extended?: boolean; }
+const { lang, compact = false, extended = false } = Astro.props;
+const homeStats = lang === 'en' ? [
+  { value: publicationStats.scholarItemCount, label: 'Google Scholar items' },
+  { value: publicationStats.soleFirstAuthorCount, label: 'Sole first author' },
+  { value: `${publicationStats.casZone1Count} / ${publicationStats.casTopCount}`, label: 'CAS Zone 1 / TOP journals' },
+  { value: publicationStats.scholarTotalCitations, label: 'Google Scholar citations', accent: true },
 ] : [
-  { value: publications.length, label: '论文' },
-  { value: soleFirstAuthorCount, label: '唯一第一作者' },
-  { value: topCount, label: '中科院一区 · TOP' },
-  { value: citations.aggregate.totalCitations, label: 'OpenAlex 总引用', accent: true },
+  { value: publicationStats.scholarItemCount, label: 'Google Scholar 收录' },
+  { value: publicationStats.soleFirstAuthorCount, label: '唯一第一作者' },
+  { value: `${publicationStats.casZone1Count} / ${publicationStats.casTopCount}`, label: '中科院一区 / TOP 期刊' },
+  { value: publicationStats.scholarTotalCitations, label: 'Google Scholar 总引用', accent: true },
 ];
+const detailedStats = lang === 'en' ? [
+  { value: publicationStats.verifiedPublicationCount, label: 'Verified publications' },
+  { value: publicationStats.scholarItemCount, label: 'Scholar items' },
+  { value: publicationStats.soleFirstAuthorCount, label: 'Sole first author' },
+  { value: publicationStats.casZone1Count, label: 'CAS Zone 1' },
+  { value: publicationStats.casTopCount, label: 'CAS TOP journals' },
+  { value: publicationStats.scholarTotalCitations, label: 'Scholar citations', accent: true },
+  { value: publicationStats.scholarHIndex, label: 'h-index' },
+  { value: publicationStats.scholarI10Index, label: 'i10-index' },
+] : [
+  { value: publicationStats.verifiedPublicationCount, label: '已核验正式论文' },
+  { value: publicationStats.scholarItemCount, label: 'Scholar 收录条目' },
+  { value: publicationStats.soleFirstAuthorCount, label: '唯一第一作者' },
+  { value: publicationStats.casZone1Count, label: '中科院一区' },
+  { value: publicationStats.casTopCount, label: 'TOP 期刊' },
+  { value: publicationStats.scholarTotalCitations, label: 'Scholar 总引用', accent: true },
+  { value: publicationStats.scholarHIndex, label: 'h-index' },
+  { value: publicationStats.scholarI10Index, label: 'i10-index' },
+];
+const stats = extended ? detailedStats : homeStats;
 ---
 
-<div class:list={['publication-summary', { compact }]} aria-label={lang === 'en' ? 'Publication summary' : '论文概览'}>
+<div class:list={['publication-summary', { compact, extended }]} aria-label={lang === 'en' ? 'Publication summary' : '论文概览'} data-scholar-snapshot={publicationStats.scholarSnapshot}>
   {stats.map((stat) => (
     <div class:list={['summary-stat', { accent: stat.accent }]}>
       <strong>{stat.value}</strong>

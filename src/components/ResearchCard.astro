@@ -1,15 +1,26 @@
 ---
 import type { Language } from '../data/types';
 import type { ResearchArea } from '../data/research';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { localizedRoute } from '../utils/paths';
+import { withBase } from '../utils/paths';
 import Icon from './Icon.astro';
 
 interface Props { area: ResearchArea; lang: Language; compact?: boolean; }
 const { area, lang, compact = false } = Astro.props;
+const customIconAvailable = existsSync(resolve('public', area.iconImage.replace(/^\//, '')));
 ---
 
 <article class:list={['research-card', { compact }]}>
-  <div class="research-card-top"><span class="research-icon" aria-hidden="true"><Icon name={area.icon} /></span><span class="research-rule" aria-hidden="true"></span></div>
+  <div class="research-card-top">
+    <span class="research-icon" data-icon-source={customIconAvailable ? 'custom' : 'fallback'}>
+      {customIconAvailable
+        ? <img src={withBase(area.iconImage)} alt={lang === 'zh' ? area.iconAltZh : area.iconAltEn} width="50" height="50" />
+        : <span aria-hidden="true"><Icon name={area.iconName} /></span>}
+    </span>
+    <span class="research-rule" aria-hidden="true"></span>
+  </div>
   <h3>{area.title[lang]}</h3>
   <p>{area.problem[lang]}</p>
   {!compact && <p class="card-detail"><strong>{lang === 'en' ? 'Method focus:' : '方法关注：'}</strong> {area.method[lang]}</p>}

@@ -12,7 +12,7 @@ const counts = Object.entries(citations.aggregate.countsByYear as Record<string,
   .sort(([left], [right]) => left.localeCompare(right))
   .slice(-7);
 const workCount = Object.keys(citations.works).length;
-const available = counts.length > 0 && citations.aggregate.totalCitations > 0;
+const available = counts.length > 0;
 const updated = citations.updatedAt
   ? new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'zh-CN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(citations.updatedAt))
   : null;
@@ -35,16 +35,16 @@ const gridLines = [0, 0.25, 0.5, 0.75, 1].map((ratio) => ({
   value: Math.round(maximum * (1 - ratio)),
 }));
 const copy = lang === 'en' ? {
-  title: 'Citation trajectory', eyebrow: 'Public scholarly metadata', total: 'Total citations', works: 'Matched works',
-  summary: `OpenAlex currently links ${workCount} works and records ${citations.aggregate.totalCitations} citations in total. The line shows citations received by year.`,
+  title: 'OpenAlex citation trajectory', eyebrow: 'Independent cross-check', works: 'OpenAlex matched works',
+  summary: `OpenAlex currently links ${workCount} works. The line shows its citations-received-by-year series.`,
   fallback: 'A verified citation trend is not available yet. Publication links remain available below.',
-  footnote: 'OpenAlex public metadata; totals may differ from Google Scholar.',
+  footnote: 'OpenAlex annual metadata is shown only as an independent trend; Google Scholar profile statistics above come from the July 2026 manual snapshot.',
   updated: 'Snapshot', scholar: 'Google Scholar profile',
 } : {
-  title: '引用趋势', eyebrow: '公开学术元数据', total: '总引用', works: '匹配论文',
-  summary: `OpenAlex 当前匹配 ${workCount} 篇论文，记录总引用 ${citations.aggregate.totalCitations} 次。折线展示各年度新增引用。`,
+  title: 'OpenAlex 引用趋势', eyebrow: '独立交叉核验', works: 'OpenAlex 匹配论文',
+  summary: `OpenAlex 当前匹配 ${workCount} 篇论文，折线仅展示其各年度引用数据。`,
   fallback: '当前暂无可核验的引用趋势数据，论文链接仍可在下方访问。',
-  footnote: '数据来自 OpenAlex 公开学术元数据，统计口径可能与 Google Scholar 不同。',
+  footnote: 'OpenAlex 年度数据仅作独立趋势参考；上方 Google Scholar 统计来自 2026-07 人工快照。',
   updated: '数据快照', scholar: 'Google Scholar 主页',
 };
 ---
@@ -57,10 +57,7 @@ const copy = lang === 'en' ? {
     </div>
     <ExternalLink class="citation-scholar-link" href={profile.scholar}><Icon name="scholar" />{copy.scholar}</ExternalLink>
   </div>
-  <div class="citation-overview">
-    <div><strong>{citations.aggregate.totalCitations}</strong><span>{copy.total}</span></div>
-    <div><strong>{workCount}</strong><span>{copy.works}</span></div>
-  </div>
+  <div class="citation-overview"><div><strong>{workCount}</strong><span>{copy.works}</span></div></div>
   {available ? (
     <div class="citation-chart-wrap">
       <p class="sr-only" id={`citation-summary-${lang}`}>{copy.summary}</p>

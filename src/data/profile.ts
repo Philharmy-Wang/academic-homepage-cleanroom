@@ -2,7 +2,7 @@ import type { BilingualText } from './types';
 
 export const profile = {
   name: { en: 'Guanbo Wang', zh: '王冠博' },
-  position: { en: 'Assistant Research Fellow', zh: '助理研究员' },
+  position: { en: 'Assistant Research Fellow and Postdoctoral Researcher', zh: '助理研究员、博士后' },
   affiliation: {
     en: 'Kunming Institute of Zoology, Chinese Academy of Sciences',
     zh: '中国科学院昆明动物研究所',
@@ -16,11 +16,11 @@ export const profile = {
   scholar: 'https://scholar.google.com/citations?user=Np7b_CQAAAAJ&hl=en',
   bio: {
     en: [
-      'Guanbo Wang is an Assistant Research Fellow at the Kunming Institute of Zoology, Chinese Academy of Sciences. He received his Ph.D. in Information and Communication Engineering from Yunnan University.',
+      'Guanbo Wang is an Assistant Research Fellow and Postdoctoral Researcher at the Kunming Institute of Zoology, Chinese Academy of Sciences. He received his Ph.D. in Information and Communication Engineering from Yunnan University.',
       'His current research develops computer vision methods for non-human primate perception and behavior understanding, including macaque detection, individual identification, pose estimation, cross-view identity association, and long-term multi-camera monitoring. His earlier work addressed lightweight object detection, multimodal remote sensing, forest wildfire detection, and edge deployment.',
     ],
     zh: [
-      '王冠博，博士，中国科学院昆明动物研究所助理研究员，毕业于云南大学信息与通信工程专业。',
+      '王冠博，博士，中国科学院昆明动物研究所助理研究员、博士后，毕业于云南大学信息与通信工程专业。',
       '当前主要开展面向非人灵长类视觉感知与行为理解的计算机视觉研究，关注群笼猕猴检测、个体识别、关键点检测、跨视角身份关联与长期多摄像头监测。此前的研究涵盖轻量化目标检测、多模态遥感、森林火灾检测与边缘端部署。',
     ],
   },
@@ -30,7 +30,7 @@ export const profile = {
     { period: '2013.09–2017.07', institution: { en: 'Xuchang University', zh: '许昌学院' }, degree: { en: 'B.S. in Communication Engineering', zh: '通信工程，学士' } },
   ],
   employment: [
-    { period: { en: '2025.07–Present', zh: '2025.07–至今' }, title: { en: 'Assistant Research Fellow', zh: '助理研究员' }, organization: { en: 'Kunming Institute of Zoology, Chinese Academy of Sciences', zh: '中国科学院昆明动物研究所' } },
+    { period: { en: '2025.07–Present', zh: '2025.07–至今' }, title: { en: 'Assistant Research Fellow and Postdoctoral Researcher', zh: '助理研究员、博士后' }, organization: { en: 'Kunming Institute of Zoology, Chinese Academy of Sciences', zh: '中国科学院昆明动物研究所' } },
   ],
 } satisfies {
   name: BilingualText;

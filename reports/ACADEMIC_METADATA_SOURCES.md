@@ -1,13 +1,15 @@
-# Academic Metadata Sources — Polish v2
+# Academic Metadata Sources — Polish v2 History
 
 Verification date: `2026-07-10`
+
+> **Polish v2.2 supersession note:** Current publication reconciliation and CAS/TOP results are maintained in `GOOGLE_SCHOLAR_RECONCILIATION.md` and `CAS_ZONE_TOP_AUDIT.md`. The Polish v2/v2.1 tables below are retained as an audit trail and must not be read as the current public counting basis.
 
 ## Method
 
 - DOI and bibliographic metadata were checked against Crossref and DOI-resolved publisher records.
 - OpenAlex Works API records were used to cross-check titles, authorship, first-author institutions, work IDs, citation totals, and yearly citation counts.
 - Publisher pages were preferred when Crossref and OpenAlex differed in display formatting.
-- Google Scholar was not scraped. It remains an external profile and title-search link only.
+- Polish v2 did not access Google Scholar. Polish v2.2 later performed one low-frequency read-only profile capture and stored only visible values in the manual snapshot.
 - Fields that could not be matched conservatively remain empty or are withheld from public display.
 
 ## Publication updates
@@ -34,13 +36,13 @@ Verification date: `2026-07-10`
 - `flame-yolov4-tiny`: no DOI or strict OpenAlex match was confirmed.
 - `improved-yolov4-flame`: DOI retained, but OpenAlex did not return a strict usable match during this run.
 - `intelligent-car`: venue, volume, issue, pages, DOI, and publisher URL remain unconfirmed.
-- UC-Mamba remains outside the public publication dataset because final venue and bibliographic details are still unconfirmed.
+- Polish v2.2 resolved UC-Mamba through DOI/publisher metadata and added the final *Computers in Biology and Medicine* record together with the independently verified AIBDF proceedings paper. See the superseding reconciliation report.
 
 ## Citation data
 
 - Source: [OpenAlex Works API](https://docs.openalex.org/api-entities/works).
 - Matching: DOI first; strict normalized-title plus site-author fallback.
-- Current result: 13 of 16 public records matched; 273 total OpenAlex citations in the generated snapshot.
+- The retained OpenAlex file is the Polish v2 internal cross-check snapshot (13 legacy matches and 273 aggregate citations); it is not used for current Google Scholar profile totals and was intentionally not overwritten in Polish v2.2.
 - Annual aggregate currently covers 2022–2026 as returned by OpenAlex.
 - Citation numbers are not described as real-time or as Google Scholar counts.
 - Legacy author-provided citation numbers were removed from publication records so the page has one auditable citation source.
@@ -60,7 +62,7 @@ Verification date: `2026-07-10`
 - Mathematical Contest in Modeling: [COMAP](https://www.comap.com/contests/mcm-icm) describes MCM/ICM as international contests. The site uses `International Competition / 国际赛事` and translates Honorable Mention as `荣誉奖`.
 - Award outcomes and years remain author-provided. No certificate numbers, scans, or other team-member names were used.
 
-## Journal indicators — Polish v2.1 audit
+## Journal indicators — Polish v2.1 historical audit
 
 Public badges now require a source plus either an explicit metric year (`verifiedYear`) or an access-month snapshot (`verifiedAt`). Unqualified historical values remain withheld.
 
@@ -74,7 +76,7 @@ Public badges now require a source plus either an explicit metric year (`verifie
 | IET Computer Vision (`trc-yolo`) | IF 1.3 | Publisher snapshot accessed 2026-07 | [Wiley/IET journal page](https://ietresearch.onlinelibrary.wiley.com/journal/17519640). |
 | Four selected records (`dpmnet`, `rfwnet`, `m4sfwd`, `forest-fire-synthetic-images`) | CAS Zone 1 · TOP | Institutional-profile snapshot accessed 2026-07 | [Yunnan University faculty profile](https://www.ise.ynu.edu.cn/faculty/54/). This is explicitly presented as a dated institutional-profile snapshot, not as an independently reproduced CAS journal table. |
 
-The summary count of four “CAS Zone 1 · TOP” publications is derived only from the four sourced records above. No JCR, CAS, IF, or 5-Year IF value is guessed for the remaining records.
+The former v2.1 summary count of four was derived only from the four sourced records above and is superseded. Polish v2.2 audits all first-author and co-authored records against current LetPub entries; see `CAS_ZONE_TOP_AUDIT.md` for the current computed counts and full list.
 
 ## Publication image rights
 

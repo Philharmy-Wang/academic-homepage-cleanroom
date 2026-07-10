@@ -9,6 +9,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const citations = JSON.parse(readFileSync(new URL('../src/data/generated/citations.json', import.meta.url), 'utf8'));
+const scholarSnapshot = JSON.parse(readFileSync(new URL('../src/data/manual/google-scholar-snapshot.json', import.meta.url), 'utf8'));
 
 const errors = [];
 const invalidPlaceholders = new Set(['', 'To be verified', '待核验', 'Unknown']);
@@ -17,6 +18,14 @@ const publicationGroups = new Set(['First-author Publications', 'Co-authored Pub
 const projectStatuses = new Set(['Ongoing|在研', 'Completed|已结题']);
 const awardCategories = new Set(['Graduate Division|研究生组', 'National Competition|全国性赛事', 'International Competition|国际赛事']);
 const doiPattern = /^10\.\d{4,9}\/\S+$/i;
+const metricStatuses = new Set(['verified', 'partial', 'needs-author-screenshot', 'not-applicable']);
+const normalizeTitle = (title) => title.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const publicationKey = (publication) => publication.doi?.trim().toLowerCase() ?? `title:${normalizeTitle(publication.title)}`;
+const roleOf = (publication) => {
+  const selfIndex = publication.authors.findIndex((author) => author.self);
+  if (selfIndex !== 0) return 'Co-author';
+  return publication.authors.some((author, index) => index > 0 && author.coFirst) ? 'Co-first Author' : 'Sole First Author';
+};
 
 function requireBilingual(value, label) {
   if (!value || typeof value.en !== 'string' || !value.en.trim() || typeof value.zh !== 'string' || !value.zh.trim()) errors.push(`${label} 缺少中英文内容`);
@@ -54,6 +63,13 @@ uniqueIds(awards, 'awards');
 uniqueIds(patents, 'patents');
 uniqueIds(datasets, 'datasets');
 
+const publicationKeys = new Set();
+for (const publication of publications) {
+  const key = publicationKey(publication);
+  if (publicationKeys.has(key)) errors.push(`${publication.id} 与另一条论文记录 DOI/题名重复`);
+  publicationKeys.add(key);
+}
+
 for (const publication of publications) {
   if (!Number.isInteger(publication.year) || publication.year < 1900 || publication.year > 2100) errors.push(`${publication.id} 年份无效`);
   if (!publication.authors.length) errors.push(`${publication.id} 作者为空`);
@@ -61,16 +77,20 @@ for (const publication of publications) {
   if (invalidPlaceholders.has(publication.title) || invalidPlaceholders.has(publication.venue)) errors.push(`${publication.id} 含未核验的公开占位符`);
   if (!publicationGroups.has(publication.group)) errors.push(`${publication.id} 分组无效：${publication.group}`);
   if (publication.doi && !doiPattern.test(publication.doi)) errors.push(`${publication.id} DOI 格式无效：${publication.doi}`);
-  requireBilingual(publication.role, `${publication.id}.role`);
   requireBilingual(publication.contribution, `${publication.id}.contribution`);
+  const computedRole = roleOf(publication);
+  if (publication.group === 'First-author Publications' && computedRole === 'Co-author') errors.push(`${publication.id} 分组与作者顺序不一致`);
+  if (publication.group === 'Co-authored Publications' && computedRole !== 'Co-author') errors.push(`${publication.id} 分组与作者顺序不一致`);
   for (const link of publication.links) checkUrl(link.url, `${publication.id}.${link.label}`);
   for (const [label, url] of Object.entries({ publisherUrl: publication.publisherUrl, pdfUrl: publication.pdfUrl, codeUrl: publication.codeUrl, datasetUrl: publication.datasetUrl, projectUrl: publication.projectUrl, scholarUrl: publication.scholarUrl })) if (url) checkUrl(url, `${publication.id}.${label}`);
-  for (const metric of publication.metrics) {
-    if (invalidPlaceholders.has(metric.value)) errors.push(`${publication.id} 指标 ${metric.label} 未核验`);
-    if (metric.verifiedYear !== undefined && (!Number.isInteger(metric.verifiedYear) || metric.verifiedYear < 1900 || metric.verifiedYear > 2100)) errors.push(`${publication.id} 指标 ${metric.label} 年份无效`);
-    if (metric.verifiedAt !== undefined && !/^\d{4}-\d{2}$/.test(metric.verifiedAt)) errors.push(`${publication.id} 指标 ${metric.label} 快照月份无效`);
-    if ((metric.verifiedYear !== undefined || metric.verifiedAt !== undefined) && !metric.source?.trim()) errors.push(`${publication.id} 指标 ${metric.label} 缺少来源`);
-  }
+  const metric = publication.metrics;
+  if (!metricStatuses.has(metric.verificationStatus)) errors.push(`${publication.id} 指标核验状态无效`);
+  if (metric.verifiedAt && !/^\d{4}-\d{2}-\d{2}$/.test(metric.verifiedAt)) errors.push(`${publication.id} 指标核验日期无效`);
+  if (metric.casZone !== null && (![1, 2, 3, 4].includes(metric.casZone) || !metric.casEdition || !metric.casSourceUrl)) errors.push(`${publication.id} 中科院分区字段不完整`);
+  if (metric.casTop === true && metric.casZone === null) errors.push(`${publication.id} TOP 标记缺少分区`);
+  if (metric.jif !== null && (!Number.isFinite(metric.jif) || metric.jif < 0 || !metric.jcrSourceUrl)) errors.push(`${publication.id} JIF 字段不完整`);
+  if (metric.fiveYearJif !== null && (!Number.isFinite(metric.fiveYearJif) || metric.fiveYearJif < 0 || !metric.jcrSourceUrl)) errors.push(`${publication.id} 5-Year JIF 字段不完整`);
+  if (metric.jifYear !== null && (!Number.isInteger(metric.jifYear) || metric.jifYear < 1900 || metric.jifYear > 2100 || !metric.jcrEdition)) errors.push(`${publication.id} JIF 年份/版次无效`);
   if (publication.figure) {
     requireBilingual(publication.figure.alt, `${publication.id}.figure.alt`);
     if (!Number.isInteger(publication.figure.width) || publication.figure.width <= 0 || !Number.isInteger(publication.figure.height) || publication.figure.height <= 0) errors.push(`${publication.id} figure 尺寸无效`);
@@ -82,6 +102,12 @@ for (const publication of publications) {
 
 const selectedCount = publications.filter((item) => item.selected).length;
 if (selectedCount < 4 || selectedCount > 5) errors.push(`selected 论文数量应为 4–5，当前为 ${selectedCount}`);
+
+const zone1All = publications.filter((item) => item.metrics.casZone === 1).length;
+const zone1FirstAuthorOnly = publications.filter((item) => item.metrics.casZone === 1 && item.group === 'First-author Publications').length;
+const topAll = publications.filter((item) => item.metrics.casTop === true).length;
+const topFirstAuthorOnly = publications.filter((item) => item.metrics.casTop === true && item.group === 'First-author Publications').length;
+if (zone1All <= zone1FirstAuthorOnly || topAll <= topFirstAuthorOnly) errors.push('一区/TOP 统计未体现合作论文');
 
 for (const project of projects) {
   requireBilingual(project.title, `${project.id}.title`);
@@ -117,7 +143,17 @@ for (const [id, entry] of Object.entries(citations.works ?? {})) {
   for (const [year, count] of Object.entries(entry.countsByYear ?? {})) if (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > 2100 || !Number.isInteger(count) || count < 0) errors.push(`${id} citation countsByYear 无效：${year}=${count}`);
 }
 
-inspectKeys({ profile, publications, projects, awards, patents, news, datasets, citations });
+if (scholarSnapshot.totalItems !== scholarSnapshot.works.length) errors.push('Scholar totalItems 与 works 条数不一致');
+if (scholarSnapshot.totalItems === 16) errors.push('Scholar 条目数仍被错误保留为旧值 16');
+if (!/^\d{4}-\d{2}$/.test(scholarSnapshot.capturedAt)) errors.push('Scholar 快照月份无效');
+for (const field of ['totalCitations', 'hIndex', 'i10Index']) if (!Number.isInteger(scholarSnapshot[field]) || scholarSnapshot[field] < 0) errors.push(`Scholar ${field} 无效`);
+for (const work of scholarSnapshot.works) {
+  if (!work.title?.trim()) errors.push('Scholar 条目缺少题名');
+  if (work.citations !== null && (!Number.isInteger(work.citations) || work.citations < 0)) errors.push(`Scholar 引用数无效：${work.title}`);
+  if (work.publicationId && !publicationIds.has(work.publicationId)) errors.push(`Scholar 条目引用未知 publicationId：${work.publicationId}`);
+}
+
+inspectKeys({ profile, publications, projects, awards, patents, news, datasets, citations, scholarSnapshot });
 
 if (errors.length) {
   console.error(errors.map((error) => `- ${error}`).join('\n'));

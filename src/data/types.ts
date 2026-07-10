@@ -10,6 +10,7 @@ export interface Author {
   nameZh?: string;
   self?: boolean;
   corresponding?: boolean;
+  coFirst?: boolean;
 }
 
 export interface PublicationLink {
@@ -17,16 +18,25 @@ export interface PublicationLink {
   url: string;
 }
 
-export interface PublicationMetric {
-  label: string;
-  value: string;
-  verifiedYear?: number;
-  verifiedAt?: string;
-  source?: string;
+export interface PublicationMetrics {
+  casZone: 1 | 2 | 3 | 4 | null;
+  casTop: boolean | null;
+  casEdition: string | null;
+  casSourceUrl: string | null;
+  jcrQuartile: 'Q1' | 'Q2' | 'Q3' | 'Q4' | null;
+  jif: number | null;
+  fiveYearJif: number | null;
+  jifYear: number | null;
+  jcrEdition: string | null;
+  jcrSourceUrl: string | null;
+  verifiedAt: string | null;
+  verificationStatus: 'verified' | 'partial' | 'needs-author-screenshot' | 'not-applicable';
+  ccf: string | null;
 }
 
 export interface PublicationFigure {
   src: string;
+  preferredSrc?: string;
   width: number;
   height: number;
   alt: BilingualText;
@@ -47,7 +57,6 @@ export interface Publication {
   issue: string | null;
   pages: string | null;
   articleNumber: string | null;
-  role: BilingualText;
   contribution: BilingualText;
   firstAffiliation: string | null;
   doi: string | null;
@@ -59,7 +68,7 @@ export interface Publication {
   scholarUrl: string | null;
   figure: PublicationFigure | null;
   links: PublicationLink[];
-  metrics: PublicationMetric[];
+  metrics: PublicationMetrics;
   verifiedAt: string;
   sourceNotes: string;
 }

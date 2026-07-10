@@ -30,7 +30,7 @@ const jsonLd = isHome ? {
   name: profile.name.en,
   alternateName: [profile.name.zh, 'Wang Guanbo'],
   affiliation: { '@type': 'Organization', name: profile.affiliation.en },
-  jobTitle: profile.position.en,
+  jobTitle: profile.position[lang],
   email: `mailto:${profile.email}`,
   sameAs: [profile.scholar, profile.github],
 } : null;

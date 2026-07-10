@@ -91,6 +91,7 @@ for (const route of routes) {
     for (const prohibited of developerCopy) expect(bodyText).not.toContain(prohibited);
     if (route.startsWith('zh/')) {
       expect(bodyText).toContain('王冠博');
+      expect(bodyText).toContain('助理研究员、博士后');
       expect(await page.title()).toContain('王冠博');
       expect(await page.locator('meta[name="description"]').getAttribute('content')).toContain('王冠博');
     }
@@ -108,12 +109,16 @@ for (const route of routes) {
       if (testInfo.project.use.viewport!.width > 720) expect(headingBox!.x + headingBox!.width).toBeLessThanOrEqual(portraitBox!.x + 1);
       else expect(headingBox!.y + headingBox!.height).toBeLessThan(portraitBox!.y);
       await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+      await expect(page.locator('.research-card .research-icon[data-icon-source="fallback"]')).toHaveCount(6);
       await expect(page.locator('.publication-summary .summary-stat')).toHaveCount(4);
       await expect(page.locator('.timeline time')).toHaveCount(6);
       for (const date of await page.locator('.timeline time').allTextContents()) expect(date).toMatch(/^\d{4}-\d{2}$/);
     }
 
-    if (route === 'research/' || route === 'zh/research/') await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+    if (route === 'research/' || route === 'zh/research/') {
+      await expect(page.locator('.research-card .research-icon')).toHaveCount(6);
+      await expect(page.locator('.research-card .research-icon[data-icon-source="fallback"]')).toHaveCount(6);
+    }
 
     if (route === 'publications/' || route === 'zh/publications/') {
       const groups = page.locator('[data-publication-group]');
@@ -121,8 +126,11 @@ for (const route of routes) {
       await expect(page.getByText(route.startsWith('zh/') ? '其他论文' : 'Other Publications', { exact: true })).toHaveCount(0);
       const coauthored = page.locator('[data-publication-group="coauthored"]');
       await expect(coauthored.getByText('Multi-Scale Enhanced Contextual Transformer Network for Forest Fire Detection', { exact: true })).toBeVisible();
+      await expect(coauthored.locator('#scale-aware-rgbt-tracking')).toContainText(route.startsWith('zh/') ? '中科院 一区 TOP' : 'CAS Zone 1 TOP');
+      await expect(coauthored.getByText('UC-Mamba: Adaptive Cross-Level Fusion Network With 2D-Selective Foveal Scanning and Channel-Gated Linear Unit for Ulcerative Colitis Evaluation', { exact: true })).toBeVisible();
       await expect(page.locator('.publication-figure img')).toHaveCount(5);
-      await expect(page.locator('.publication-summary .summary-stat')).toHaveCount(4);
+      await expect(page.locator('.publication-figure[data-image-source="fallback"]')).toHaveCount(5);
+      await expect(page.locator('.publication-summary .summary-stat')).toHaveCount(8);
       await expect(page.locator('.contribution')).toHaveCount(0);
       expect(await page.locator('.metric-badge').count()).toBeGreaterThan(0);
       if (route.startsWith('zh/')) {
@@ -138,6 +146,23 @@ for (const route of routes) {
       expect(trendSectionBox).not.toBeNull();
       expect(trendBox!.x).toBeGreaterThanOrEqual(trendSectionBox!.x - 1);
       expect(trendBox!.x + trendBox!.width).toBeLessThanOrEqual(trendSectionBox!.x + trendSectionBox!.width + 1);
+      await expect(page.locator('.citation-trend h2')).toContainText('OpenAlex');
+      await expect(page.locator('.publication-summary')).toHaveAttribute('data-scholar-snapshot', '2026-07');
+      await expect(page.locator('.citation-overview')).not.toContainText(route.startsWith('zh/') ? '总引用' : 'Total citations');
+    }
+
+    if (route === 'datasets/' || route === 'zh/datasets/') {
+      await expect(page.locator('.resource-card')).toHaveCount(4);
+      for (const heading of await page.locator('.resource-card h2').all()) {
+        const style = await heading.evaluate((element) => ({
+          writingMode: getComputedStyle(element).writingMode,
+          wordBreak: getComputedStyle(element).wordBreak,
+          width: element.getBoundingClientRect().width,
+        }));
+        expect(style.writingMode).toBe('horizontal-tb');
+        expect(style.wordBreak).not.toBe('break-all');
+        expect(style.width).toBeGreaterThan(150);
+      }
     }
 
     if (route === 'projects/' || route === 'zh/projects/') {

@@ -3,29 +3,38 @@ import type { Language } from '../data/types';
 import { datasets } from '../data/datasets';
 import { profile } from '../data/profile';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import Icon from './Icon.astro';
+
 interface Props { lang: Language; }
 const { lang } = Astro.props;
 const copy = lang === 'en' ? {
-  title: 'Datasets & Code', description: 'Public release status of datasets and code associated with Guanbo Wang’s research.',
-  intro: 'Release status for selected datasets and research code associated with current and previous work.', eyebrow: 'Research resources', contact: 'For academic collaboration or resource requests, please contact me by email.',
+  title: 'Datasets & Code', description: 'Release and collaboration status for datasets and code associated with Guanbo Wang’s research.',
+  intro: 'Selected resources are shared responsibly according to project, ethics, privacy, and collaboration requirements.', eyebrow: 'Research resources', contact: 'Resource enquiries',
 } : {
-  title: '数据与代码', description: '王冠博研究相关数据与代码的公开状态。',
-  intro: '当前与前期研究中部分数据集及研究代码的发布状态。', eyebrow: '研究资源', contact: '如需开展学术合作或咨询资源，请通过邮件联系。',
+  title: '数据与代码', description: '王冠博研究相关数据与代码的发布及合作状态。',
+  intro: '部分研究资源将依据项目、伦理、隐私与合作要求规范共享。', eyebrow: '研究资源', contact: '资源咨询',
 };
 ---
 <ContentLayout lang={lang} route="/datasets/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
-  <section class="content-section">
-    <div class="project-list">
-      {datasets.map((dataset) => (
-        <article class="project-card">
-          <h2>{dataset.title[lang]}</h2>
-          <p>{dataset.description[lang]}</p>
-          <div class="project-meta"><span>{dataset.status[lang]}</span></div>
+  <section class="content-section" aria-label={copy.eyebrow}>
+    <div class="resource-list">
+      {datasets.map((resource) => (
+        <article class="resource-card" id={resource.id}>
+          <span class="resource-icon" aria-hidden="true"><Icon name={resource.iconName} /></span>
+          <div class="resource-copy">
+            <h2>{resource.title[lang]}</h2>
+            <p>{resource.description[lang]}</p>
+          </div>
+          <div class="resource-actions">
+            <span class="resource-status">{resource.status[lang]}</span>
+            <a href={`mailto:${profile.email}?subject=${encodeURIComponent(resource.title.en)}`}>{resource.sharing[lang]}</a>
+          </div>
         </article>
       ))}
     </div>
   </section>
-  <section class="content-section">
-    <p>{copy.contact} <a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+  <section class="content-section resource-contact">
+    <h2>{copy.contact}</h2>
+    <p><a href={`mailto:${profile.email}`}>{profile.email}</a></p>
   </section>
 </ContentLayout>

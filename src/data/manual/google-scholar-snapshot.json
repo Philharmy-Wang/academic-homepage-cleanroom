@@ -1,0 +1,32 @@
+{
+  "profileUrl": "https://scholar.google.com/citations?user=Np7b_CQAAAAJ&hl=zh-TW",
+  "capturedAt": "2026-07",
+  "capturedOn": "2026-07-10",
+  "totalItems": 20,
+  "totalCitations": 362,
+  "hIndex": 9,
+  "i10Index": 8,
+  "citationsByYear": {},
+  "works": [
+    { "title": "Fighting against terrorism: A real-time CCTV autonomous weapons detection based on improved YOLO v4", "year": 2023, "citations": 69, "publicationId": "fighting-terrorism-yolov4", "classification": "already-listed" },
+    { "title": "M4SFWD: A multi-faceted synthetic dataset for remote sensing forest wildfires detection", "year": 2024, "citations": 68, "publicationId": "m4sfwd", "classification": "already-listed" },
+    { "title": "TRC-YOLO: A real-time detection method for lightweight targets based on mobile devices", "year": 2022, "citations": 59, "publicationId": "trc-yolo", "classification": "already-listed" },
+    { "title": "Trident-YOLO: Improving the precision and speed of mobile device object detection", "year": 2022, "citations": 43, "publicationId": "trident-yolo", "classification": "already-listed" },
+    { "title": "RFWNet: A multiscale remote sensing forest wildfire detection network with digital twinning, adaptive spatial aggregation, and dynamic sparse features", "year": 2024, "citations": 36, "publicationId": "rfwnet", "classification": "already-listed" },
+    { "title": "Fighting against forest fire: A lightweight real-time detection approach for forest fire based on synthetic images", "year": 2025, "citations": 27, "publicationId": "forest-fire-synthetic-images", "classification": "already-listed" },
+    { "title": "DPMNet: A remote sensing forest fire real-time detection network driven by dual pathways and multidimensional interactions of features", "year": 2024, "citations": 25, "publicationId": "dpmnet", "classification": "already-listed", "note": "Scholar shows the online year; the site keeps the verified final-volume year 2025." },
+    { "title": "SCDFuse: A semantic complementary distillation framework for joint infrared and visible image fusion and denoising", "year": 2025, "citations": 15, "publicationId": "scdfuse", "classification": "already-listed" },
+    { "title": "Scale-aware attention and multi-modal prompt learning with fusion adapter for RGBT tracking", "year": 2025, "citations": 9, "publicationId": "scale-aware-rgbt-tracking", "classification": "already-listed", "note": "Scholar shows the online year; the site keeps the verified final-volume year 2026." },
+    { "title": "Real-time detection algorithm for non-motorized vehicles based on D-YOLO model", "year": 2024, "citations": 5, "publicationId": "non-motorized-d-yolo", "classification": "already-listed" },
+    { "title": "DPSNET: A dual-path lightweight network with semantic-guided cross-modal feature fusion for multimodal object detection", "year": 2025, "citations": 2, "publicationId": "dpsnet", "classification": "already-listed" },
+    { "title": "Multi-scale enhanced contextual transformer network for forest fire detection", "year": 2025, "citations": 1, "publicationId": "multi-scale-contextual-transformer", "classification": "already-listed", "note": "Scholar shows the online year; the site keeps the verified final-volume year 2026." },
+    { "title": "Cross-modal deep interaction and modal-aware aggregation network for visible and infrared tracking", "year": 2025, "citations": 1, "publicationId": "cross-modal-tracking", "classification": "already-listed" },
+    { "title": "Real-time flame detection with improved YOLO v4-tiny", "year": 2022, "citations": 1, "publicationId": "flame-yolov4-tiny", "classification": "duplicate-version", "note": "English metadata version of the Chinese record; not counted as another publication." },
+    { "title": "改进 YOLO v4-tiny 的火焰实时检测", "year": 2022, "citations": 1, "publicationId": "flame-yolov4-tiny", "classification": "already-listed" },
+    { "title": "Multi-scale Frequency-domain Reconstruction and Multi-dimensional Collaborative Attention Network for Forest Fire Detection in Remote Sensing Imagery", "year": 2025, "citations": null, "publicationId": "aibdf-forest-fire", "classification": "missing-formal-publication", "note": "Verified as an independent AIBDF proceedings paper by DOI." },
+    { "title": "UC-Mamba: Adaptive Cross-Level Fusion Network With 2D-Selective Foveal Scanning and Channel-Gated Linear Unit for Ulcerative Colitis Evaluation", "year": 2025, "citations": null, "publicationId": "uc-mamba", "classification": "missing-formal-publication", "note": "Verified in Computers in Biology and Medicine, volume 196, article 110869." },
+    { "title": "改进 YOLOv4 的火焰图像实时检测", "year": 2022, "citations": null, "publicationId": "improved-yolov4-flame", "classification": "already-listed" },
+    { "title": "Experimental Design of Tracking and Obstacle Avoidance Intelligent Car", "year": 2021, "citations": null, "publicationId": "intelligent-car", "classification": "duplicate-version", "note": "English metadata version of the Chinese record; not counted as another publication." },
+    { "title": "循迹避障智能小车的实验设计", "year": 2021, "citations": null, "publicationId": "intelligent-car", "classification": "already-listed" }
+  ]
+}

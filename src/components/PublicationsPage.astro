@@ -17,18 +17,19 @@ const groups: Array<{ key: string; title: { en: string; zh: string }; items: Pub
 ];
 const numberById = new Map(groups.flatMap((group) => group.items).map((publication, index) => [publication.id, index + 1]));
 const copy = lang === 'en' ? {
-  title: 'Publications', description: 'Selected and complete publication records for Guanbo Wang, with formal authorship, audited journal indicators, public links, and OpenAlex citation snapshots.',
+  title: 'Publications', description: 'Selected and complete publication records for Guanbo Wang, with formal authorship, audited journal indicators, public links, and a Google Scholar snapshot.',
   intro: 'Research outputs across remote sensing, multimodal vision, efficient detection, image fusion, tracking, and applied visual intelligence.',
   eyebrow: 'Research outputs', star: '* Corresponding author.',
 } : {
-  title: '论文', description: '王冠博的代表性及完整论文记录，包含正式作者署名、已核验期刊指标、公开链接与 OpenAlex 引用快照。',
+  title: '论文', description: '王冠博的代表性及完整论文记录，包含正式作者署名、已核验期刊指标、公开链接与 Google Scholar 快照。',
   intro: '研究成果涵盖遥感、多模态视觉、高效检测、图像融合、目标跟踪与视觉智能应用。',
   eyebrow: '研究成果', star: '* 通讯作者。',
 };
 ---
 
 <ContentLayout lang={lang} route="/publications/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
-  <PublicationSummary lang={lang} />
+  <PublicationSummary lang={lang} extended />
+  <CitationTrend lang={lang} />
   {groups.map((group) => (
     <>
       <section class="content-section publication-group" aria-labelledby={`group-${group.key}`} data-publication-group={group.key}>
@@ -37,7 +38,6 @@ const copy = lang === 'en' ? {
           {group.items.map((publication) => <PublicationCard publication={publication} lang={lang} number={numberById.get(publication.id)} />)}
         </div>
       </section>
-      {group.key === 'selected' && <CitationTrend lang={lang} />}
     </>
   ))}
   <section class="content-section publication-notes" aria-label={lang === 'en' ? 'Publication notes' : '论文说明'}>

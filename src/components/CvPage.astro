@@ -6,6 +6,7 @@ import { projects } from '../data/projects';
 import { selectedPublications } from '../data/publications';
 import { patents } from '../data/patents';
 import { awards } from '../data/awards';
+import { publicationStats } from '../data/publicationStats';
 import ContentLayout from '../layouts/ContentLayout.astro';
 import PublicationCard from './PublicationCard.astro';
 import PublicationSummary from './PublicationSummary.astro';
@@ -18,11 +19,28 @@ const startKey = (project: Project) => Number((projectPeriod(project.period)?.ma
 const selectedGrants = projects.filter((item) => item.group !== 'participated').sort((left, right) => startKey(right) - startKey(left));
 const copy = lang === 'en' ? {
   title: 'Curriculum Vitae', description: 'Printable academic curriculum vitae of Guanbo Wang.', intro: 'A structured, print-friendly academic record.', eyebrow: 'Academic CV',
-  profile: 'Profile', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants and Projects', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
+  profile: 'Profile', highlights: 'Highlights', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants and Projects', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
 } : {
   title: '个人履历', description: '王冠博的可打印学术履历。', intro: '结构清晰、适合网页浏览与打印的学术履历。', eyebrow: '学术履历',
-  profile: '个人信息', interests: '研究方向', employment: '工作经历', education: '教育经历', grants: '代表性项目资助', publications: '代表性论文', patents: '专利', honors: '荣誉奖励', contact: '联系方式',
+  profile: '个人信息', highlights: '精选成果', interests: '研究方向', employment: '工作经历', education: '教育经历', grants: '代表性项目资助', publications: '代表性论文', patents: '专利', honors: '荣誉奖励', contact: '联系方式',
 };
+const highlights = lang === 'en' ? [
+  `${profile.position.en}, ${profile.affiliation.en}`,
+  'General Program of the China Postdoctoral Science Foundation',
+  'Yunnan Caiyun Postdoctoral Program Innovation Project',
+  'Doctoral Student Special Program of the Young Talent Promotion Project of CAST',
+  'Representative papers in IEEE TCSVT, IEEE TGRS, and Expert Systems with Applications',
+  `Google Scholar: ${publicationStats.scholarTotalCitations} citations, h-index ${publicationStats.scholarHIndex}, i10-index ${publicationStats.scholarI10Index} (${publicationStats.scholarSnapshot})`,
+  `${publicationStats.casZone1Count} CAS Zone 1 papers and ${publicationStats.casTopCount} CAS TOP journal papers`,
+] : [
+  `${profile.affiliation.zh}${profile.position.zh}`,
+  '中国博士后科学基金面上资助',
+  '云南省“彩云博士后计划”创新项目',
+  '中国科协青年人才托举工程博士生专项计划',
+  '代表性论文发表于 IEEE TCSVT、IEEE TGRS 与 Expert Systems with Applications',
+  `Google Scholar：总引用 ${publicationStats.scholarTotalCitations}，h-index ${publicationStats.scholarHIndex}，i10-index ${publicationStats.scholarI10Index}（${publicationStats.scholarSnapshot}）`,
+  `中科院一区论文 ${publicationStats.casZone1Count} 篇，TOP 期刊论文 ${publicationStats.casTopCount} 篇`,
+];
 ---
 <ContentLayout lang={lang} route="/cv/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
   <section class="cv-section cv-profile-section" aria-labelledby="cv-profile">
@@ -41,6 +59,10 @@ const copy = lang === 'en' ? {
       </address>
     </header>
     <PublicationSummary lang={lang} compact />
+  </section>
+  <section class="cv-section cv-highlights" aria-labelledby="cv-highlights">
+    <h2 id="cv-highlights">{copy.highlights}</h2>
+    <ul>{highlights.map((highlight) => <li>{highlight}</li>)}</ul>
   </section>
   <section class="cv-section" aria-labelledby="cv-interests">
     <h2 id="cv-interests">{copy.interests}</h2>

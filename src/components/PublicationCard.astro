@@ -1,6 +1,8 @@
 ---
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { Language, Publication } from '../data/types';
-import citations from '../data/generated/citations.json';
+import { getPublicationRole, getScholarCitationCount, publicationStats } from '../data/publicationStats';
 import { withBase } from '../utils/paths';
 import ExternalLink from './ExternalLink.astro';
 import Icon from './Icon.astro';
@@ -14,8 +16,9 @@ interface Props {
   number?: number | undefined;
   showFigure?: boolean;
 }
-interface CitationEntry { totalCitations: number; source: string; }
+
 const { publication, lang, compact = false, cv = false, number, showFigure = !cv } = Astro.props;
+const role = getPublicationRole(publication);
 const authorLabel = publication.authors.map((author) => ({
   ...author,
   display: author.self ? 'Guanbo Wang' : (lang === 'zh' && author.nameZh ? author.nameZh : author.name),
@@ -25,11 +28,7 @@ const bibliographicParts = [
   publication.pages ?? publication.articleNumber,
 ].filter(Boolean);
 const scholarUrl = publication.scholarUrl ?? `https://scholar.google.com/scholar?q=${encodeURIComponent(publication.title)}`;
-const citationEntry = (citations.works as Record<string, CitationEntry>)[publication.id];
-const citationDate = citations.updatedAt
-  ? new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'zh-CN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(citations.updatedAt))
-  : null;
-const verifiedMetrics = publication.metrics.filter((metric) => metric.verifiedYear || metric.verifiedAt);
+const scholarCitations = getScholarCitationCount(publication.id);
 const structuredLinks = [
   publication.doi && { label: 'DOI', url: `https://doi.org/${publication.doi}` },
   publication.publisherUrl && { label: 'Publisher', url: publication.publisherUrl },
@@ -41,9 +40,24 @@ const structuredLinks = [
 ].filter((link): link is { label: string; url: string } => Boolean(link));
 const directLinks = [...new Map(structuredLinks.map((link) => [link.url, link])).values()];
 const hasFigure = Boolean(showFigure && publication.figure);
-const metricEdition = (metric: Publication['metrics'][number]) => metric.verifiedYear
-  ? `${metric.label} · ${metric.verifiedYear}`
-  : `${metric.label} · ${lang === 'en' ? 'snapshot' : '快照'} ${metric.verifiedAt}`;
+const preferredFigureAvailable = Boolean(publication.figure?.preferredSrc && existsSync(resolve('public', publication.figure.preferredSrc.replace(/^\//, ''))));
+const figureSrc = publication.figure
+  ? (preferredFigureAvailable ? publication.figure.preferredSrc! : publication.figure.src)
+  : null;
+const metrics = publication.metrics;
+const casZoneLabels = lang === 'en'
+  ? { 1: 'Zone 1', 2: 'Zone 2', 3: 'Zone 3', 4: 'Zone 4' }
+  : { 1: '一区', 2: '二区', 3: '三区', 4: '四区' };
+const metricBadges = [
+  metrics.casZone && {
+    label: lang === 'en' ? 'CAS' : '中科院',
+    value: `${casZoneLabels[metrics.casZone]}${metrics.casTop ? ' TOP' : ''}`,
+    source: [metrics.casEdition, metrics.casSourceUrl].filter(Boolean).join(' · '),
+  },
+  metrics.jcrQuartile && { label: 'JCR', value: metrics.jcrQuartile, source: [metrics.jcrEdition, metrics.jcrSourceUrl].filter(Boolean).join(' · ') },
+  metrics.jif !== null && { label: 'IF', value: String(metrics.jif), source: [metrics.jifYear, metrics.jcrEdition, metrics.jcrSourceUrl].filter(Boolean).join(' · ') },
+  metrics.fiveYearJif !== null && { label: '5-Year IF', value: String(metrics.fiveYearJif), source: [metrics.jifYear, metrics.jcrEdition, metrics.jcrSourceUrl].filter(Boolean).join(' · ') },
+].filter((item): item is { label: string; value: string; source: string } => Boolean(item));
 ---
 
 <article class:list={['publication-card', { compact, cv, 'has-figure': hasFigure }]} id={publication.id}>
@@ -53,7 +67,7 @@ const metricEdition = (metric: Publication['metrics'][number]) => metric.verifie
   </div>
   <div class="publication-content">
     <div class="publication-body">
-      <div class="publication-kicker"><span>{publication.role[lang]}</span><span>{publication.venue}</span></div>
+      <div class="publication-kicker"><span>{role[lang]}</span><span>{publication.venue}</span></div>
       <h3>{lang === 'zh' && publication.titleZh ? publication.titleZh : publication.title}</h3>
       <p class="authors">
         {authorLabel.map((author, index) => (
@@ -61,16 +75,16 @@ const metricEdition = (metric: Publication['metrics'][number]) => metric.verifie
         ))}
       </p>
       <p class="venue"><em>{publication.venue}</em>, {publication.year}{bibliographicParts.length ? `, ${bibliographicParts.join(', ')}` : ''}.</p>
-      {verifiedMetrics.length > 0 && (
+      {metricBadges.length > 0 && (
         <div class="metric-row" aria-label={lang === 'en' ? 'Audited journal indicators' : '已核验期刊指标'}>
-          {verifiedMetrics.map((metric) => <MetricBadge label={metricEdition(metric)} value={metric.value} source={metric.source} />)}
+          {metricBadges.map((metric) => <MetricBadge label={metric.label} value={metric.value} source={metric.source} />)}
         </div>
       )}
       <div class="publication-meta-row">
-        {citationEntry && (
-          <span class="citation-pill" title={citationDate ? `${lang === 'en' ? 'OpenAlex snapshot' : 'OpenAlex 快照'}: ${citationDate} UTC` : undefined}>
+        {scholarCitations !== null && (
+          <span class="citation-pill" title={`Google Scholar · ${publicationStats.scholarSnapshot}`}>
             <Icon name="citation" />
-            <strong>{citationEntry.totalCitations}</strong> {lang === 'en' ? 'citations' : '次引用'}
+            <strong>{scholarCitations}</strong> {lang === 'en' ? 'Google Scholar citations' : '次 Google Scholar 引用'}
           </span>
         )}
         <div class="publication-links">
@@ -79,9 +93,11 @@ const metricEdition = (metric: Publication['metrics'][number]) => metric.verifie
         </div>
       </div>
     </div>
-    {hasFigure && (
-      <figure class="publication-figure">
-        <img src={withBase(publication.figure!.src)} alt={publication.figure!.alt[lang]} width={publication.figure!.width} height={publication.figure!.height} loading="eager" />
+    {hasFigure && figureSrc && (
+      <figure class="publication-figure" data-image-source={preferredFigureAvailable ? 'custom' : 'fallback'}>
+        <a href={withBase(figureSrc)} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Open publication figure' : '查看论文主图'}>
+          <img src={withBase(figureSrc)} alt={publication.figure!.alt[lang]} width={publication.figure!.width} height={publication.figure!.height} loading="eager" />
+        </a>
       </figure>
     )}
   </div>

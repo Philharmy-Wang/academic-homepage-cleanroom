@@ -1,34 +1,25 @@
 ---
 import type { Language } from '../data/types';
-import { profile } from '../data/profile';
-import { publications } from '../data/publications';
-import { researchAreas } from '../data/research';
-import citations from '../data/generated/citations.json';
+import { publicationStats } from '../data/publicationStats';
 
 interface Props { lang: Language; }
 const { lang } = Astro.props;
-const soleFirstAuthorCount = publications.filter((item) => item.role.en === 'Sole First Author').length;
 const facts = lang === 'en' ? [
-  { value: profile.position.en, label: 'Current appointment', text: true },
-  { value: researchAreas.length, label: 'Research lines' },
-  { value: soleFirstAuthorCount, label: 'Sole-first-author papers' },
-  { value: citations.aggregate.totalCitations, label: 'OpenAlex citations' },
+  { value: publicationStats.scholarItemCount, label: 'Google Scholar items' },
+  { value: publicationStats.soleFirstAuthorCount, label: 'Sole-first-author papers' },
+  { value: `${publicationStats.casZone1Count} / ${publicationStats.casTopCount}`, label: 'CAS Zone 1 / TOP journals' },
+  { value: publicationStats.scholarTotalCitations, label: 'Google Scholar citations' },
 ] : [
-  { value: profile.position.zh, label: '当前岗位', text: true },
-  { value: researchAreas.length, label: '研究主线' },
-  { value: soleFirstAuthorCount, label: '唯一第一作者论文' },
-  { value: citations.aggregate.totalCitations, label: 'OpenAlex 总引用' },
+  { value: publicationStats.scholarItemCount, label: 'Google Scholar 收录' },
+  { value: publicationStats.soleFirstAuthorCount, label: '唯一第一作者论文' },
+  { value: `${publicationStats.casZone1Count} / ${publicationStats.casTopCount}`, label: '中科院一区 / TOP 期刊' },
+  { value: publicationStats.scholarTotalCitations, label: 'Google Scholar 总引用' },
 ];
 ---
 
-<aside class="at-a-glance" aria-label={lang === 'en' ? 'At a glance' : '概览'}>
-  <p class="eyebrow">{lang === 'en' ? 'At a glance' : '概览'}</p>
+<aside class="at-a-glance" aria-label={lang === 'en' ? 'At a glance' : '学术概览'} data-scholar-snapshot={publicationStats.scholarSnapshot}>
+  <p class="eyebrow">{lang === 'en' ? 'At a glance' : '学术概览'}</p>
   <div class="fact-grid">
-    {facts.map((fact) => (
-      <div class:list={['fact-item', { textual: fact.text }]}>
-        <strong>{fact.value}</strong>
-        <span>{fact.label}</span>
-      </div>
-    ))}
+    {facts.map((fact) => <div class="fact-item"><strong>{fact.value}</strong><span>{fact.label}</span></div>)}
   </div>
 </aside>
