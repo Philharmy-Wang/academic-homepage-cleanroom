@@ -1,0 +1,16 @@
+---
+import type { Language } from '../data/types';
+import { localizedRoute } from '../utils/paths';
+import { news } from '../data/news';
+interface Props { lang: Language; limit?: number; }
+const { lang, limit = news.length } = Astro.props;
+---
+
+<ol class="timeline">
+  {news.slice(0, limit).map((item) => (
+    <li>
+      <time>{item.date}</time>
+      <p><a href={localizedRoute(item.route, lang)}>{item.title[lang]}</a></p>
+    </li>
+  ))}
+</ol>

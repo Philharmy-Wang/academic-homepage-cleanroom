@@ -1,0 +1,67 @@
+---
+import type { Language } from '../data/types';
+import { profile } from '../data/profile';
+import { researchAreas } from '../data/research';
+import { selectedPublications } from '../data/publications';
+import { localizedRoute } from '../utils/paths';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from './Hero.astro';
+import PublicationCard from './PublicationCard.astro';
+import ResearchCard from './ResearchCard.astro';
+import SectionHeading from './SectionHeading.astro';
+import Timeline from './Timeline.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const copy = lang === 'en' ? {
+  description: 'Academic homepage of Guanbo Wang, Assistant Research Fellow working on computer vision for non-human primate behavior understanding.',
+  bioTitle: 'Profile', bioEyebrow: 'About',
+  currentTitle: 'Current work', currentText: 'I am building practical visual perception pipelines for group-housed macaques, connecting detection, individual identification, keypoint estimation, behavior understanding, and long-term multi-camera monitoring.',
+  researchTitle: 'Research focus', researchDescription: 'Six connected research lines spanning animal visual perception, efficient vision, and multimodal remote sensing.',
+  publicationsTitle: 'Selected publications', publicationsDescription: 'Representative first-author work in remote sensing, multimodal vision, and efficient detection.',
+  publicationsLink: 'View all publications',
+  updatesTitle: 'Recent updates', updatesDescription: 'Selected research, position, grant, and publication milestones.',
+} : {
+  description: '王冠博个人学术主页，中国科学院昆明动物研究所助理研究员，研究方向为面向非人灵长类行为理解的计算机视觉。',
+  bioTitle: '个人简介', bioEyebrow: '关于',
+  currentTitle: '当前工作', currentText: '当前着力构建面向群笼猕猴的实用视觉感知流程，将个体检测、个体识别、关键点估计、行为理解与长期多摄像头监测衔接起来。',
+  researchTitle: '研究方向', researchDescription: '围绕动物视觉感知、高效视觉与多模态遥感形成六条相互关联的研究主线。',
+  publicationsTitle: '代表性论文', publicationsDescription: '遥感、多模态视觉与高效检测方向的代表性第一作者研究。',
+  publicationsLink: '查看全部论文',
+  updatesTitle: '近期动态', updatesDescription: '科研岗位、项目资助、论文发表与学术荣誉等阶段性进展。',
+};
+---
+
+<BaseLayout lang={lang} route="/" title={profile.name[lang]} description={copy.description} isHome>
+  <div class="home-shell">
+    <Hero lang={lang} />
+    <section class="home-section bio-grid" aria-labelledby="bio-heading">
+      <div class="bio-copy">
+        <p class="eyebrow">{copy.bioEyebrow}</p>
+        <h2 id="bio-heading">{copy.bioTitle}</h2>
+        {profile.bio[lang].map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+      <aside class="current-work">
+        <h3>{copy.currentTitle}</h3>
+        <p>{copy.currentText}</p>
+      </aside>
+    </section>
+    <section class="home-section" aria-labelledby="research-heading">
+      <SectionHeading title={copy.researchTitle} description={copy.researchDescription} />
+      <div class="research-grid">
+        {researchAreas.map((area) => <ResearchCard area={area} lang={lang} compact />)}
+      </div>
+    </section>
+    <section class="home-section" aria-labelledby="publications-heading">
+      <SectionHeading title={copy.publicationsTitle} description={copy.publicationsDescription} />
+      <div class="publication-list">
+        {selectedPublications.map((publication) => <PublicationCard publication={publication} lang={lang} compact />)}
+      </div>
+      <a class="section-link" href={localizedRoute('/publications/', lang)}>{copy.publicationsLink} <span aria-hidden="true">→</span></a>
+    </section>
+    <section class="home-section" aria-labelledby="updates-heading">
+      <SectionHeading title={copy.updatesTitle} description={copy.updatesDescription} />
+      <Timeline lang={lang} limit={8} />
+    </section>
+  </div>
+</BaseLayout>

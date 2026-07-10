@@ -1,0 +1,26 @@
+---
+import type { Language } from '../data/types';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  lang: Language;
+  route: string;
+  title: string;
+  description: string;
+  eyebrow?: string;
+  intro?: string;
+}
+
+const { lang, route, title, description, eyebrow, intro } = Astro.props;
+---
+
+<BaseLayout lang={lang} route={route} title={title} description={description}>
+  <div class="page-shell">
+    <header class="page-header">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{title}</h1>
+      {intro && <p>{intro}</p>}
+    </header>
+    <div class="page-content"><slot /></div>
+  </div>
+</BaseLayout>

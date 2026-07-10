@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+set -eu
+
+remote_name="${1:-}"
+push_url="${2:-}"
+
+fail() {
+  printf '%s\n' "安全检查失败：$1" >&2
+  exit 1
+}
+
+[ "$remote_name" = "origin" ] || fail "只允许向 origin 推送，当前 remote 为 ${remote_name:-<空>}。"
+
+case "$push_url" in
+  https://github.com/Philharmy-Wang/academic-homepage-cleanroom.git|git@github.com:Philharmy-Wang/academic-homepage-cleanroom.git) ;;
+  *) fail "推送地址不在预览阶段白名单中：$push_url" ;;
+esac
+
+case "$push_url" in
+  *GuangLun2000*|*upstream*) fail "推送地址包含永久禁止的 owner 或 upstream 标识。" ;;
+esac
+
+zero="0000000000000000000000000000000000000000"
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -n "${local_ref:-}" ] || continue
+  if [ "$remote_ref" = "refs/heads/main" ] && [ "$local_sha" = "$zero" ]; then
+    fail "禁止删除远程 main 分支。"
+  fi
+  if [ "$local_sha" != "$zero" ] && [ "$remote_sha" != "$zero" ]; then
+    if ! git merge-base --is-ancestor "$remote_sha" "$local_sha"; then
+      fail "检测到非快进更新；禁止 force push。"
+    fi
+  fi
+done
+
+printf '%s\n' "远程安全检查通过：仅允许推送到 Philharmy-Wang/academic-homepage-cleanroom。"

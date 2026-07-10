@@ -1,0 +1,63 @@
+---
+import type { Language } from '../data/types';
+import { profile } from '../data/profile';
+import { researchAreas } from '../data/research';
+import { projects } from '../data/projects';
+import { selectedPublications } from '../data/publications';
+import { patents } from '../data/patents';
+import { awards } from '../data/awards';
+import ContentLayout from '../layouts/ContentLayout.astro';
+import PublicationCard from './PublicationCard.astro';
+import ExternalLink from './ExternalLink.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const copy = lang === 'en' ? {
+  title: 'Curriculum Vitae', description: 'Printable academic curriculum vitae of Guanbo Wang.', intro: 'A concise, print-friendly academic record.', eyebrow: 'Academic CV',
+  profile: 'Profile', interests: 'Research Interests', employment: 'Employment', education: 'Education', grants: 'Selected Grants', publications: 'Selected Publications', patents: 'Patents', honors: 'Honors and Awards', contact: 'Contact',
+} : {
+  title: '个人履历', description: '王冠博的可打印学术履历。', intro: '简明、适合打印的学术履历。', eyebrow: '学术履历',
+  profile: '个人信息', interests: '研究方向', employment: '工作经历', education: '教育经历', grants: '代表性项目资助', publications: '代表性论文', patents: '专利', honors: '荣誉奖励', contact: '联系方式',
+};
+---
+<ContentLayout lang={lang} route="/cv/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
+  <section class="cv-section" aria-labelledby="cv-profile">
+    <h2 id="cv-profile">{copy.profile}</h2>
+    <div class="cv-profile">
+      <div><h2>{profile.name[lang]}</h2><p><strong>{profile.position[lang]}</strong><br />{profile.affiliation[lang]}</p></div>
+      <div><a href={`mailto:${profile.email}`}>{profile.email}</a><br /><ExternalLink href={profile.scholar}>Google Scholar</ExternalLink><br /><ExternalLink href={profile.github}>GitHub</ExternalLink></div>
+    </div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-interests">
+    <h2 id="cv-interests">{copy.interests}</h2>
+    <ul>{researchAreas.map((area) => <li>{area.title[lang]}</li>)}</ul>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-employment">
+    <h2 id="cv-employment">{copy.employment}</h2>
+    <div class="timeline-rows">{profile.employment.map((item) => <div class="cv-row"><strong>{item.period[lang]}</strong><span>{item.title[lang]}, {item.organization[lang]}</span></div>)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-education">
+    <h2 id="cv-education">{copy.education}</h2>
+    <div class="timeline-rows">{profile.education.map((item) => <div class="cv-row"><strong>{item.period}</strong><span>{item.institution[lang]}, {item.degree[lang]}</span></div>)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-grants">
+    <h2 id="cv-grants">{copy.grants}</h2>
+    <div class="timeline-rows">{projects.filter((item) => item.group === 'current' || item.group === 'funded').map((item) => <div class="cv-row"><strong>{item.period}</strong><span>{item.title[lang]} — {item.role[lang]}</span></div>)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-publications">
+    <h2 id="cv-publications">{copy.publications}</h2>
+    <div class="publication-list">{selectedPublications.map((publication) => <PublicationCard publication={publication} lang={lang} compact />)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-patents">
+    <h2 id="cv-patents">{copy.patents}</h2>
+    <div class="patent-list">{patents.map((patent) => <article class="patent-item"><h3>{patent.title[lang]}</h3><p>{patent.number} · {patent.status[lang]} · {patent.date} · {patent.role[lang]}</p></article>)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-honors">
+    <h2 id="cv-honors">{copy.honors}</h2>
+    <div class="timeline-rows">{awards.filter((award) => award.group === 'academic').slice(0, 5).map((award) => <div class="cv-row"><strong>{award.year}</strong><span>{award.title[lang]}</span></div>)}</div>
+  </section>
+  <section class="cv-section" aria-labelledby="cv-contact">
+    <h2 id="cv-contact">{copy.contact}</h2>
+    <p>{profile.affiliation[lang]}<br /><a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+  </section>
+</ContentLayout>

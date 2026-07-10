@@ -1,0 +1,12 @@
+---
+import type { Language } from '../data/types';
+import { alternateLanguage, localizedRoute } from '../utils/paths';
+
+interface Props { lang: Language; route: string; }
+const { lang, route } = Astro.props;
+const target = alternateLanguage(lang);
+---
+
+<a class="language-switch" href={localizedRoute(route, target)} lang={target === 'zh' ? 'zh-CN' : 'en'} hreflang={target === 'zh' ? 'zh-CN' : 'en'}>
+  {lang === 'en' ? '中文' : 'English'}
+</a>

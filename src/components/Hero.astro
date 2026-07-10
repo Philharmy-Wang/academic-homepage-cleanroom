@@ -1,0 +1,29 @@
+---
+import type { Language } from '../data/types';
+import { profile } from '../data/profile';
+import { localizedRoute, withBase } from '../utils/paths';
+import ExternalLink from './ExternalLink.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="eyebrow">{lang === 'en' ? 'Computer vision · Animal behavior' : '计算机视觉 · 动物行为'}</p>
+    <h1 id="hero-title"><span>{profile.name.en}</span><span class="name-zh" lang="zh-CN">王冠博</span></h1>
+    <p class="hero-position">{profile.position[lang]}</p>
+    <p class="hero-affiliation">{profile.affiliation[lang]}</p>
+    <p class="hero-focus">{profile.positioning[lang]}</p>
+    <div class="hero-actions" aria-label={lang === 'en' ? 'Profile links' : '个人资料链接'}>
+      <a class="button primary" href={`mailto:${profile.email}`}>Email</a>
+      <ExternalLink class="button" href={profile.scholar}>Google Scholar</ExternalLink>
+      <ExternalLink class="button" href={profile.github}>GitHub</ExternalLink>
+      <a class="button" href={localizedRoute('/cv/', lang)}>CV</a>
+      <a class="button language-inline" href={localizedRoute('/', lang === 'en' ? 'zh' : 'en')}>{lang === 'en' ? '中文' : 'English'}</a>
+    </div>
+  </div>
+  <figure class="portrait-frame">
+    <img src={withBase('/images/profile/wangguanbo.jpg')} alt={lang === 'en' ? 'Portrait of Guanbo Wang' : '王冠博个人照片'} width="1720" height="2242" loading="eager" fetchpriority="high" />
+  </figure>
+</section>

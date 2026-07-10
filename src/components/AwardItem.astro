@@ -1,0 +1,14 @@
+---
+import type { Award, Language } from '../data/types';
+interface Props { award: Award; lang: Language; }
+const { award, lang } = Astro.props;
+---
+
+<article class="award-item">
+  <time>{award.year}</time>
+  <div>
+    <h3>{award.title[lang]}</h3>
+    {award.project && <p class="award-project">{award.project[lang]}</p>}
+    <p class="award-meta">{[award.level?.[lang], award.role?.[lang]].filter(Boolean).join(' · ')}</p>
+  </div>
+</article>

@@ -1,0 +1,23 @@
+---
+import type { Language } from '../data/types';
+import { profile } from '../data/profile';
+import ExternalLink from './ExternalLink.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <strong>{profile.name[lang]}</strong>
+      <p>{profile.position[lang]} · {profile.affiliation[lang]}</p>
+    </div>
+    <div class="footer-links">
+      <a href={`mailto:${profile.email}`}>Email</a>
+      <ExternalLink href={profile.scholar}>Google Scholar</ExternalLink>
+      <ExternalLink href={profile.github}>GitHub</ExternalLink>
+    </div>
+    <p class="footer-note">© {new Date().getFullYear()} {profile.name[lang]}. {lang === 'en' ? 'Built for clear, responsible academic communication.' : '用于清晰、负责的学术交流。'}</p>
+  </div>
+</footer>

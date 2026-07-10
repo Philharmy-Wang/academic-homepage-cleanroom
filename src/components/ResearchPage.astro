@@ -1,0 +1,22 @@
+---
+import type { Language } from '../data/types';
+import { researchAreas } from '../data/research';
+import ContentLayout from '../layouts/ContentLayout.astro';
+import ResearchCard from './ResearchCard.astro';
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const copy = lang === 'en' ? {
+  title: 'Research', description: 'Research directions in non-human primate visual perception, behavior understanding, efficient vision, and multimodal remote sensing.',
+  intro: 'My work connects method development with long-term, real-world observation. Each research line is framed by the scientific problem, the methodological focus, and its current stage.',
+  eyebrow: 'Research program',
+} : {
+  title: '研究方向', description: '王冠博在非人灵长类视觉感知、行为理解、高效视觉与多模态遥感方面的研究方向。',
+  intro: '我的研究强调方法开发与长期真实场景观察的衔接。以下主线分别概述科学问题、方法关注点与当前阶段。',
+  eyebrow: '研究主线',
+};
+---
+<ContentLayout lang={lang} route="/research/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
+  <div class="research-grid">
+    {researchAreas.map((area) => <ResearchCard area={area} lang={lang} />)}
+  </div>
+</ContentLayout>

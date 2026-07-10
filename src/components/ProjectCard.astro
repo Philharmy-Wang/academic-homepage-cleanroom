@@ -1,0 +1,16 @@
+---
+import type { Language, Project } from '../data/types';
+interface Props { project: Project; lang: Language; }
+const { project, lang } = Astro.props;
+---
+
+<article class="project-card">
+  <h3>{project.title[lang]}</h3>
+  <p class="project-name">{project.project[lang]}</p>
+  {project.organization && <p class="organization">{project.organization[lang]}</p>}
+  <div class="project-meta">
+    {project.period && <span>{project.period}</span>}
+    {project.status && <span>{project.status[lang]}</span>}
+    <span>{project.role[lang]}</span>
+  </div>
+</article>

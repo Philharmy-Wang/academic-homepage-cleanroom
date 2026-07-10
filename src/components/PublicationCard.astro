@@ -1,0 +1,41 @@
+---
+import type { Language, Publication } from '../data/types';
+import ExternalLink from './ExternalLink.astro';
+import MetricBadge from './MetricBadge.astro';
+
+interface Props { publication: Publication; lang: Language; compact?: boolean; }
+const { publication, lang, compact = false } = Astro.props;
+const authorLabel = publication.authors.map((author) => ({
+  ...author,
+  display: lang === 'zh' && author.nameZh ? author.nameZh : author.name,
+}));
+const bibliographicParts = [
+  publication.volume && publication.issue ? `${publication.volume}(${publication.issue})` : publication.volume,
+  publication.pages ?? publication.articleNumber,
+].filter(Boolean);
+const scholarUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(publication.title)}`;
+---
+
+<article class:list={['publication-card', { compact }]} id={publication.id}>
+  <div class="publication-year">{publication.year}</div>
+  <div class="publication-body">
+    <h3>{lang === 'zh' && publication.titleZh ? publication.titleZh : publication.title}</h3>
+    <p class="authors">
+      {authorLabel.map((author, index) => (
+        <><span class:list={{ 'self-author': author.self }} lang={lang === 'zh' && author.nameZh ? 'zh-CN' : undefined}>{author.display}{author.corresponding ? <sup title={lang === 'en' ? 'Corresponding author' : '通讯作者'}>*</sup> : ''}</span>{index < authorLabel.length - 1 ? ', ' : ''}</>
+      ))}
+    </p>
+    <p class="venue"><em>{publication.venue}</em>, {publication.year}{bibliographicParts.length ? `, ${bibliographicParts.join(': ')}` : ''}.</p>
+    <p class="contribution"><strong>{publication.role[lang]}.</strong> {publication.contribution[lang]}</p>
+    {!compact && publication.metrics.length > 0 && (
+      <div class="metric-row" aria-label={lang === 'en' ? 'Verified journal metrics' : '已核验期刊指标'}>
+        {publication.metrics.map((metric) => <MetricBadge label={metric.label} value={metric.value} />)}
+      </div>
+    )}
+    <div class="publication-links">
+      {publication.links.map((link) => <ExternalLink href={link.url}>{link.label}</ExternalLink>)}
+      <ExternalLink href={scholarUrl}>Google Scholar</ExternalLink>
+      {publication.citations !== null && <span class="citation-note">{lang === 'en' ? `Citations in the latest author-provided Scholar record: ${publication.citations}` : `作者提供的最新 Scholar 记录引用数：${publication.citations}`}</span>}
+    </div>
+  </div>
+</article>

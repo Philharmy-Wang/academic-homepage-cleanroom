@@ -1,0 +1,32 @@
+---
+import type { Language } from '../data/types';
+import { awards } from '../data/awards';
+import ContentLayout from '../layouts/ContentLayout.astro';
+import AwardItem from './AwardItem.astro';
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const groupNames = {
+  grants: { en: 'Grants and Talent Programs', zh: '项目资助与人才计划' },
+  academic: { en: 'Academic Honors', zh: '学术荣誉' },
+  competitions: { en: 'Competitions', zh: '学科竞赛' },
+  other: { en: 'Other Recognitions', zh: '其他荣誉' },
+};
+const groups = Object.keys(groupNames) as Array<keyof typeof groupNames>;
+const copy = lang === 'en' ? {
+  title: 'Awards & Honors', description: 'Selected grants, talent programs, academic honors, and competition awards of Guanbo Wang.',
+  intro: 'Awards are listed by name, year, level, and role where available. Certificate identifiers, certificate scans, and other team members’ names are not published.', eyebrow: 'Recognition',
+} : {
+  title: '奖励与荣誉', description: '王冠博的项目资助、人才计划、学术荣誉与学科竞赛奖励。',
+  intro: '奖项仅展示名称、年份、级别与本人角色。证书编号、证书扫描件及证书上的其他团队成员姓名均不公开。', eyebrow: '荣誉记录',
+};
+---
+<ContentLayout lang={lang} route="/awards/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
+  {groups.map((group) => (
+    <section class="content-section" aria-labelledby={`award-${group}`}>
+      <h2 id={`award-${group}`}>{groupNames[group][lang]}</h2>
+      <div class="award-list">
+        {awards.filter((award) => award.group === group).map((award) => <AwardItem award={award} lang={lang} />)}
+      </div>
+    </section>
+  ))}
+</ContentLayout>

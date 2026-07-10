@@ -1,0 +1,19 @@
+---
+import type { Language } from '../data/types';
+import type { ResearchArea } from '../data/research';
+import { localizedRoute } from '../utils/paths';
+
+interface Props { area: ResearchArea; lang: Language; compact?: boolean; }
+const { area, lang, compact = false } = Astro.props;
+---
+
+<article class:list={['research-card', { compact }]}>
+  <div class="card-index" aria-hidden="true">{area.id.slice(0, 2).toUpperCase()}</div>
+  <h3>{area.title[lang]}</h3>
+  <p>{area.problem[lang]}</p>
+  {!compact && <p class="card-detail"><strong>{lang === 'en' ? 'Method focus:' : '方法关注：'}</strong> {area.method[lang]}</p>}
+  <div class="card-footer">
+    <span class="status">{area.status[lang]}</span>
+    <a href={localizedRoute(area.relatedRoute, lang)}>{lang === 'en' ? 'Related work' : '相关工作'} <span aria-hidden="true">→</span></a>
+  </div>
+</article>

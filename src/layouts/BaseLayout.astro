@@ -1,0 +1,67 @@
+---
+import type { Language } from '../data/types';
+import { profile } from '../data/profile';
+import { localizedRoute, withBase } from '../utils/paths';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/tokens.css';
+import '../styles/reset.css';
+import '../styles/global.css';
+import '../styles/components.css';
+import '../styles/print.css';
+
+interface Props {
+  lang: Language;
+  route: string;
+  title: string;
+  description: string;
+  isHome?: boolean;
+}
+
+const { lang, route, title, description, isHome = false } = Astro.props;
+const localizedPath = localizedRoute(route, lang);
+const canonical = new URL(localizedPath, Astro.site);
+const enUrl = new URL(localizedRoute(route, 'en'), Astro.site);
+const zhUrl = new URL(localizedRoute(route, 'zh'), Astro.site);
+const fullTitle = isHome ? `${profile.name[lang]} — ${profile.positioning[lang]}` : `${title} — ${profile.name[lang]}`;
+const jsonLd = isHome ? {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name.en,
+  alternateName: profile.name.zh,
+  affiliation: { '@type': 'Organization', name: profile.affiliation.en },
+  jobTitle: profile.position.en,
+  email: `mailto:${profile.email}`,
+  sameAs: [profile.scholar, profile.github],
+} : null;
+---
+
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="zh-CN" href={zhUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    <link rel="icon" href={withBase('/favicon.ico')} sizes="any" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : 'en_US'} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="theme-color" content="#f7f9fc" />
+    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{lang === 'en' ? 'Skip to main content' : '跳到主要内容'}</a>
+    <Header lang={lang} route={route} />
+    <main id="main-content"><slot /></main>
+    <Footer lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,59 @@
+---
+import type { Language } from '../data/types';
+import { navigation } from '../data/navigation';
+import { localizedRoute } from '../utils/paths';
+import LanguageSwitch from './LanguageSwitch.astro';
+
+interface Props { lang: Language; route: string; }
+const { lang, route } = Astro.props;
+---
+
+<header class="site-header" data-site-header>
+  <div class="header-inner">
+    <a class="site-name" href={localizedRoute('/', lang)} aria-label={lang === 'en' ? 'Guanbo Wang home' : '王冠博主页'}>
+      <span>Guanbo Wang</span><span aria-hidden="true"> / </span><span lang="zh-CN">王冠博</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+      <span>{lang === 'en' ? 'Menu' : '菜单'}</span>
+      <span class="menu-icon" aria-hidden="true"></span>
+    </button>
+    <nav id="site-navigation" class="site-nav" aria-label={lang === 'en' ? 'Primary navigation' : '主导航'}>
+      <ul>
+        {navigation.map((item) => (
+          <li>
+            <a href={localizedRoute(item.route, lang)} aria-current={item.route === route ? 'page' : undefined}>
+              {item.label[lang]}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <LanguageSwitch lang={lang} route={route} />
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const button = header?.querySelector<HTMLButtonElement>('.menu-toggle');
+  const nav = header?.querySelector<HTMLElement>('.site-nav');
+
+  const closeMenu = () => {
+    button?.setAttribute('aria-expanded', 'false');
+    nav?.classList.remove('is-open');
+  };
+
+  button?.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeMenu();
+      button?.focus();
+    }
+  });
+
+  nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+</script>

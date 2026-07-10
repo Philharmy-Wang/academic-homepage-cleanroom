@@ -1,0 +1,39 @@
+---
+import type { Language, Publication } from '../data/types';
+import { publications, selectedPublications } from '../data/publications';
+import ContentLayout from '../layouts/ContentLayout.astro';
+import PublicationCard from './PublicationCard.astro';
+
+interface Props { lang: Language; }
+const { lang } = Astro.props;
+const groups: Array<{ key: string; title: { en: string; zh: string }; items: Publication[] }> = [
+  { key: 'selected', title: { en: 'Selected Publications', zh: '代表性论文' }, items: selectedPublications },
+  { key: 'first', title: { en: 'First-author Publications', zh: '第一作者论文' }, items: publications.filter((item) => item.group === 'First-author Publications' && !item.selected) },
+  { key: 'coauthored', title: { en: 'Co-authored Publications', zh: '合作论文' }, items: publications.filter((item) => item.group === 'Co-authored Publications') },
+  { key: 'chinese', title: { en: 'Chinese Publications', zh: '中文论文' }, items: publications.filter((item) => item.group === 'Chinese Publications') },
+  { key: 'other', title: { en: 'Other Publications', zh: '其他论文' }, items: publications.filter((item) => item.group === 'Other Publications') },
+];
+const copy = lang === 'en' ? {
+  title: 'Publications', description: 'Structured publication list for Guanbo Wang with authorship, contributions, verified metrics, and available links.',
+  intro: 'Authors are stored as structured data; Guanbo Wang is shown in bold and corresponding authors are marked with an asterisk. Direct links appear only when available from the public source record.',
+  eyebrow: 'Research outputs', note: 'Journal metrics are displayed only when verified and may change across annual editions.', star: '* Corresponding author.',
+} : {
+  title: '论文', description: '王冠博的结构化论文列表，包括作者、本人贡献、已核验指标与可用链接。',
+  intro: '作者信息采用结构化数据维护；王冠博以粗体显示，通讯作者以星号标注。仅在公开来源中已有有效链接时显示直接入口。',
+  eyebrow: '研究成果', note: '仅展示已核验的期刊指标，相关数据可能随年度版本更新。', star: '* 通讯作者。',
+};
+---
+<ContentLayout lang={lang} route="/publications/" title={copy.title} description={copy.description} intro={copy.intro} eyebrow={copy.eyebrow}>
+  {groups.filter((group) => group.items.length > 0).map((group) => (
+    <section class="content-section" aria-labelledby={`group-${group.key}`}>
+      <h2 id={`group-${group.key}`}>{group.title[lang]}</h2>
+      <div class="publication-list">
+        {group.items.map((publication) => <PublicationCard publication={publication} lang={lang} />)}
+      </div>
+    </section>
+  ))}
+  <section class="content-section" aria-label={lang === 'en' ? 'Publication notes' : '论文说明'}>
+    <p class="metric-footnote">{copy.note}</p>
+    <p class="metric-footnote">{copy.star}</p>
+  </section>
+</ContentLayout>
