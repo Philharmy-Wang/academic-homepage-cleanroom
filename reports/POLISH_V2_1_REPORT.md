@@ -127,12 +127,21 @@ Preview: <https://philharmy-wang.github.io/academic-homepage-cleanroom/>
 
 ## 15. GitHub Actions run ID
 
-- Quality：`PENDING_AFTER_PUSH`
-- Deploy to GitHub Pages：`PENDING_AFTER_PUSH`
+- Polish v2.1 实现提交：`551d5af08f788282ffd853ceb594bb374c66378e`。
+- Quality：`29079505959`，`success`。
+- Deploy to GitHub Pages：`29079505983`，`success`。
+- Quality 的 Node 运行时提示来自 GitHub 对 `actions/checkout@v4` / `actions/setup-node@v4` 的平台级弃用迁移注释，不是项目测试失败；全部质量步骤均成功。
 
 ## 16. 线上回读结果
 
-`PENDING_AFTER_PUSH`
+对 <https://philharmy-wang.github.io/academic-homepage-cleanroom/> 使用真实 Chromium 完成回读：
+
+- 14/14 中英文路由 HTTP 200。
+- 14/14 页面均存在 main、h1、可见桌面导航及独立语言按钮。
+- 14/14 页面横向 overflow 为 0。
+- 14/14 页面 console error 为 0、HTTP 失败资源为 0。
+- 中英文 Publications 页面均显示 5 张代表作主图、4 项 summary stats 和可见引用折线图。
+- 390px 复核英文首页、中文首页、英文 Publications、中文 CV：HTTP 200，overflow 0，语言按钮可见，移动菜单可打开，console error 0。
 
 ## 17. 尚待用户后续手动提供的论文主图清单
 
